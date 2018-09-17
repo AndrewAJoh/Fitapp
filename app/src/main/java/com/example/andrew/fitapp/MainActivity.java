@@ -1,6 +1,10 @@
 /**
+ * 9/17/18
  * TO DO:
- *
+ * Clean up inefficient code
+ * Test app UI on different devices
+ * Add graphs
+ * Fix crashes related to incorrect user input
  */
 
 

@@ -41,8 +41,6 @@ public class EntryDetail extends AppCompatActivity {
         weightedOrTimed = dbHelper.getData("SELECT Measurement FROM NameTable4 WHERE Name = '" + name + "'");
         simpleBoolean = dbHelper.getData("SELECT Simple FROM NameTable4 WHERE Name = '" + name + "'");
         type = dbHelper.getData("SELECT Type FROM NameTable4 WHERE Name = '" + name + "'");
-        System.out.println("weightedOrTimed: " + weightedOrTimed);
-        System.out.println("simpleBoolean: " + simpleBoolean);
         if (weightedOrTimed.equals("Weighted")) {
             if (simpleBoolean.equals("False")) {
                 setContentView(R.layout.activity_entry_detail_weights);
@@ -122,7 +120,6 @@ public class EntryDetail extends AppCompatActivity {
             }
             int tempInt = Integer.parseInt(finalTime);
             finalTime = Integer.toString(tempInt);
-            System.out.println(finalTime);
             time = finalTime;
             finalTime = "";
             if (time.length() % 2 == 0) {

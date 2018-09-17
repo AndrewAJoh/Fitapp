@@ -29,7 +29,6 @@ public class AddEvent extends AppCompatActivity {
         Log.d(TAG, "OnCreate: started");
         super.onCreate(savedInstanceState);
         name = getIntent().getStringExtra("workoutName");
-        System.out.println("name of workout: " + name);
         weightedOrTimed = dbHelper.getData("SELECT Measurement FROM NameTable4 WHERE Name = '" + name + "'");
         simpleBoolean = dbHelper.getData("SELECT Simple FROM NameTable4 WHERE Name = '" + name + "'");
         getSupportActionBar().setTitle(name);
@@ -137,11 +136,28 @@ public class AddEvent extends AppCompatActivity {
             if (simpleBoolean.equals("False")){
                 //Time and Distance Activity
                 EditText hoursText = findViewById(R.id.hhText);
+                String hoursString = hoursText.getText().toString();
+                if (hoursString.matches("")){
+                    acceptable = false;
+                }
                 EditText minutesText = findViewById(R.id.mmText);
+                String minutesString = minutesText.getText().toString();
+                if (minutesString.matches("")){
+                    acceptable = false;
+                }
                 EditText secondsText = findViewById(R.id.ssText);
+                String secondsString = secondsText.getText().toString();
+                if (secondsString.matches("")){
+                    acceptable = false;
+                }
                 EditText distanceText = findViewById(R.id.distanceText);
+                String distanceEditText = distanceText.getText().toString();
+                if (distanceEditText.matches("")){
+                    acceptable = false;
+                }
                 int hours = Integer.parseInt(hoursText.getText().toString());
                 int minutes = Integer.parseInt(minutesText.getText().toString());
+
                 if (minutes > 59){
                     acceptable = false;
                 }
@@ -168,8 +184,20 @@ public class AddEvent extends AppCompatActivity {
             } else if (simpleBoolean.equals("True")){
                 //Time Activity
                 EditText hoursText = findViewById(R.id.hhText);
+                String hoursString = hoursText.getText().toString();
+                if (hoursString.matches("")){
+                    acceptable = false;
+                }
                 EditText minutesText = findViewById(R.id.mmText);
+                String minutesString = minutesText.getText().toString();
+                if (minutesString.matches("")){
+                    acceptable = false;
+                }
                 EditText secondsText = findViewById(R.id.ssText);
+                String secondsString = secondsText.getText().toString();
+                if (secondsString.matches("")){
+                    acceptable = false;
+                }
                 int hours = Integer.parseInt(hoursText.getText().toString());
                 int minutes = Integer.parseInt(minutesText.getText().toString());
                 if (minutes > 59 ){

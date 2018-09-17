@@ -113,7 +113,6 @@ public class NewEntry extends AppCompatActivity  implements AdapterView.OnItemSe
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
         String text = parent.getItemAtPosition(position).toString();
-        System.out.println("CURRENT ON: "+text);
         sendDataToFragment(type, text);
     }
 
@@ -146,7 +145,6 @@ public class NewEntry extends AppCompatActivity  implements AdapterView.OnItemSe
         if (requestCode == 0) {
             if (resultCode == Activity.RESULT_OK) {
                 // get String data from Intent
-                System.out.println("ADDING TO THE RECYCLERVIEW");
                 String text = spinner.getSelectedItem().toString();
                 sendDataToFragment(type, text);
             }

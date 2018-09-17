@@ -35,7 +35,6 @@ public class AddActivity extends AppCompatActivity {
 
     public void onAddClick(View view) {
         EditText addText = findViewById(R.id.submissionText);
-
         //result contains the new Workout name
         String result = addText.getText().toString();
         result = result.toLowerCase();

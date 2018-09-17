@@ -40,7 +40,6 @@ public class TopWorkouts extends Fragment implements NewEntry.FragmentListener{
         dbHelper = new DatabaseHelper(getContext());
         weightedOrTimed = dbHelper.getData("SELECT Measurement FROM NameTable4 WHERE Name = '" + name + "'");
         simpleBoolean = dbHelper.getData("SELECT Simple FROM NameTable4 WHERE Name = '" + name + "'");
-        //INITIAL TAB
         if (weightedOrTimed.equals("Weighted")) {
             if (simpleBoolean.equals("False")) {
                 initData("Weighted", null);
@@ -74,16 +73,13 @@ public class TopWorkouts extends Fragment implements NewEntry.FragmentListener{
             arrOfStr = data.split(",");
             String newString;
             String resultString;
-            System.out.println(data);
             if (!arrOfStr[0].equals("")) {
                 topList = new ArrayList<DataSet>();
                 for (int i = 0; i < arrOfStr.length; i += 3) {
                     newString = arrOfStr[i];
-                    System.out.println(newString);
                     resultString = "";
                     int totalSeconds = Integer.parseInt(newString);
                     int hours = totalSeconds/3600;
-                    System.out.println(hours);
                     if (hours == 0){
                         resultString += "00";
                     } else if (hours < 10 && hours > 0){
@@ -115,7 +111,6 @@ public class TopWorkouts extends Fragment implements NewEntry.FragmentListener{
                     int tempInt = Integer.parseInt(resultString);
                     resultString = Integer.toString(tempInt);
                     newString = resultString;
-                    System.out.println("newString is: "+newString);
                     resultString = "";
                     if (newString.length() % 2 == 0) {
                         for (int j = 0; j < newString.length(); j++) {
@@ -132,7 +127,6 @@ public class TopWorkouts extends Fragment implements NewEntry.FragmentListener{
                             }
                         }
                     }
-                    System.out.println(resultString);
                     date = arrOfStr[i + 1];
                     newDate = "";
                     if (date.charAt(5) == '0') {
@@ -165,11 +159,9 @@ public class TopWorkouts extends Fragment implements NewEntry.FragmentListener{
             if (measurement.equals("Distance")){
                 data = dbHelper.getData("SELECT Distance, Date, ID FROM TimedTable4 WHERE Name = '" + name + "' ORDER BY Distance DESC");
                 arrOfStr = data.split(",");
-                System.out.println(data);
                 if (!arrOfStr[0].equals("")){
                     topList = new ArrayList<DataSet>();
                     for (int i = 0; i < arrOfStr.length; i+=3){
-                        System.out.println(arrOfStr[i]);
                         date = arrOfStr[i + 1];
                         newDate = "";
                         if (date.charAt(5) == '0') {
@@ -203,17 +195,13 @@ public class TopWorkouts extends Fragment implements NewEntry.FragmentListener{
                 arrOfStr = data.split(",");
                 String newString;
                 String resultString;
-                System.out.println(data);
                 if (!arrOfStr[0].equals("")) {
                     topList = new ArrayList<DataSet>();
                     for (int i = 0; i < arrOfStr.length; i += 3) {
                         newString = arrOfStr[i];
-                        System.out.println(newString);
                         resultString = "";
-                        //Format into nice time format
                         int totalSeconds = Integer.parseInt(newString);
                         int hours = totalSeconds/3600;
-                        System.out.println(hours);
                         if (hours == 0){
                             resultString += "00";
                         } else if (hours < 10 && hours > 0){
@@ -245,7 +233,6 @@ public class TopWorkouts extends Fragment implements NewEntry.FragmentListener{
                         int tempInt = Integer.parseInt(resultString);
                         resultString = Integer.toString(tempInt);
                         newString = resultString;
-                        System.out.println("newString is: "+newString);
                         resultString = "";
                         if (newString.length() % 2 == 0) {
                             for (int j = 0; j < newString.length(); j++) {
@@ -262,7 +249,6 @@ public class TopWorkouts extends Fragment implements NewEntry.FragmentListener{
                                 }
                             }
                         }
-                        System.out.println(resultString);
                         date = arrOfStr[i + 1];
                         newDate = "";
                         if (date.charAt(5) == '0') {
@@ -315,10 +301,6 @@ public class TopWorkouts extends Fragment implements NewEntry.FragmentListener{
                             seconds = Integer.parseInt(newString);
                         }
                         if (i % 5 == 1) {
-                            //Distance
-                            //Have seconds in pace, divide by distance
-                            //miles aren't currently in integers - causing error
-                            //clip off additional decimals
                             distanceString = arrOfStr[i];
                             distanceDouble = Double.parseDouble(distanceString);
                             paceDouble = seconds / distanceDouble;
@@ -381,14 +363,12 @@ public class TopWorkouts extends Fragment implements NewEntry.FragmentListener{
             data = dbHelper.getData("SELECT Weight, Sets, Reps, Date, ID, (Weight * Sets * Reps) AS Total FROM WeightedTable2 WHERE Name = '" + name + "' ORDER BY Total DESC");
             arrOfStr = data.split(",");
             String newString = "";
-            System.out.println(data);
             String id = "";
             if (!arrOfStr[0].equals("")) {
                 topList = new ArrayList<DataSet>();
                 for (int i = 0; i < arrOfStr.length; i += 1) {
                     if (i % 6 == 3){
                         date = arrOfStr[i];
-                        System.out.println("DATE IS: "+date);
                         newDate = "";
                         if (date.charAt(5) == '0') {
                             newDate += date.charAt(6);
@@ -435,7 +415,6 @@ public class TopWorkouts extends Fragment implements NewEntry.FragmentListener{
             arrOfStr = data.split(",");
             String newString = "";
             String id = "";
-            System.out.println(data);
             if (!arrOfStr[0].equals("")) {
                 topList = new ArrayList<DataSet>();
                 for (int i = 0; i < arrOfStr.length; i += 1) {
