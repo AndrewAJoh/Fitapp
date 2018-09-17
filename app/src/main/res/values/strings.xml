@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Simplifit</string>
+    <string name="edit_message">Enter a message</string>
+    <string name="button_send">send</string>
+    <string name="title_activity_display_message">DisplayMessageActivity</string>
+    <string-array name="FitnessTypes">
+        <item> Cardio </item>
+        <item> Bicep </item>
+    </string-array>
+    <string name="action_settings">Settings</string>
+    <string-array name="TimeMeasurements">
+        <item> Distance</item>
+        <item> Time </item>
+        <item> Pace </item>
+    </string-array>
+    <string-array name="SimpleTimeMeasurements">
+        <item> Time </item>
+    </string-array>
+    <string-array name="WeightedMeasurements">
+        <item> Total </item>
+    </string-array>
+    <string-array name="SimpleWeightedMeasurements">
+        <item> Reps </item>
+    </string-array>
+</resources>
