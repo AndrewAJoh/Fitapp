@@ -1,6 +1,6 @@
 # Simplifit
 
-Simplifit is a simple workout tracker for Android that allows users to enter and track their fitness data.
+Simplifit is a simple workout tracker for Android that allows users to track and customize their fitness data.
 
 Since this is my first android project, I don't plan on publishing it to the Play store but rather am creating it for my own educational purposes.
 
