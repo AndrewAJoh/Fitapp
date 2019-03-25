@@ -22,10 +22,10 @@ import java.util.List;
  * Created by Andrew on 7/17/2018.
  */
 
-public class OpenActivity extends AppCompatActivity {
+public class SelectActivity extends AppCompatActivity {
 
     DatabaseHelper dbHelper = new DatabaseHelper(this);
-    private static final String TAG = "OpenActivity";
+    private static final String TAG = "SelectActivity";
     public String buttonName;
     private boolean created = false;
     Adapter adapter;

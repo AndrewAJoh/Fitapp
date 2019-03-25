@@ -17,7 +17,7 @@ import java.util.Date;
  * Created by Andrew on 8/19/2018.
  */
 
-public class AddEvent extends AppCompatActivity {
+public class AddEventActivity extends AppCompatActivity {
     private static final String TAG = "AddEvent";
     DatabaseHelper dbHelper = new DatabaseHelper(this);
     private static String weightedOrTimed;

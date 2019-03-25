@@ -15,40 +15,40 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".OpenActivity"
+        <activity android:name=".SelectActivity"
             android:parentActivityName=".MainActivity"
             android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".NewEntry"
-            android:parentActivityName=".OpenActivity"
+        <activity android:name=".EventsOverviewActivity"
+            android:parentActivityName=".SelectActivity"
             android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".OpenActivity" />
+                android:value=".SelectActivity" />
         </activity>
         <activity android:name=".AddActivity"
-            android:parentActivityName=".OpenActivity"
+            android:parentActivityName=".SelectActivity"
             android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".OpenActivity" />
+                android:value=".SelectActivity" />
         </activity>
-        <activity android:name=".AddEvent"
-            android:parentActivityName=".NewEntry"
+        <activity android:name=".AddEventActivity"
+            android:parentActivityName=".EventsOverviewActivity"
             android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".NewEntry" />
+                android:value=".EventsOverviewActivity" />
         </activity>
-        <activity android:name=".EntryDetail"
-            android:parentActivityName=".AddEvent"
+        <activity android:name=".EventDetailActivity"
+            android:parentActivityName=".EventsOverviewActivity"
             android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".AddEvent" />
+                android:value=".EventsOverviewActivity" />
         </activity>
     </application>
 </manifest>

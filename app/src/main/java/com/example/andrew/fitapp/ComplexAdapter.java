@@ -62,7 +62,7 @@ public class ComplexAdapter extends RecyclerView.Adapter<ComplexAdapter.SecondVi
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "clicked on button");
-                Intent intent = new Intent(v.getContext(), EntryDetail.class);
+                Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
                 intent.putExtra("workoutName", name);
                 intent.putExtra("date", date);
                 intent.putExtra("id", id);

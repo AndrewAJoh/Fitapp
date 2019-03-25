@@ -23,7 +23,7 @@ import android.widget.Toast;
  * Created by Andrew on 7/19/2018.
  */
 
-public class NewEntry extends AppCompatActivity  implements AdapterView.OnItemSelectedListener {
+public class EventsOverviewActivity extends AppCompatActivity  implements AdapterView.OnItemSelectedListener {
     DatabaseHelper dbHelper = new DatabaseHelper(this);
     private static final String TAG = "NewEntry";
     private static String workoutType;
@@ -81,8 +81,8 @@ public class NewEntry extends AppCompatActivity  implements AdapterView.OnItemSe
 
     private void setupViewPager(ViewPager viewPager){
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
-        adapter.addFragment(new TopWorkouts(), "Top");
-        adapter.addFragment(new RecentWorkouts(), "Recent");
+        adapter.addFragment(new TopWorkoutsFragment(), "Top");
+        adapter.addFragment(new RecentWorkoutsFragment(), "Recent");
         viewPager.setAdapter(adapter);
     }
 
@@ -95,16 +95,16 @@ public class NewEntry extends AppCompatActivity  implements AdapterView.OnItemSe
     public void deleteWorkout(MenuItem item) {
         String name = getIntent().getStringExtra("workoutName");
         if (weightedOrTimed.equals("Weighted")){
-            dbHelper.deleteData("0", "Weight", name);
+            dbHelper.deleteActivity("Weight", name);
         } else{
-            dbHelper.deleteData("0", "Time", name);
+            dbHelper.deleteActivity( "Time", name);
         }
         finish();
     }
 
     public void onButtonAdd(View view){
         String name = getIntent().getStringExtra("workoutName");
-        Intent intent = new Intent(view.getContext(), AddEvent.class);
+        Intent intent = new Intent(view.getContext(), AddEventActivity.class);
         intent.putExtra("workoutName", name);
         startActivityForResult(intent, 0);
     }

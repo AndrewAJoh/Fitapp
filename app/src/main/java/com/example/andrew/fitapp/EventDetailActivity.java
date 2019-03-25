@@ -13,7 +13,7 @@ import android.widget.TextView;
  * Created by Andrew on 9/6/2018.
  */
 
-public class EntryDetail extends AppCompatActivity {
+public class EventDetailActivity extends AppCompatActivity {
     private static final String TAG = "EntryDetail";
     private static String id;
     private static String name;
@@ -155,9 +155,9 @@ public class EntryDetail extends AppCompatActivity {
 
     public void deleteWorkout(MenuItem item) {
         if (weightedOrTimed.equals("Weighted")){
-            dbHelper.deleteData("1", "Weight", id);
+            dbHelper.deleteEvent("Weight", id);
         } else{
-            dbHelper.deleteData("1", "Time", id);
+            dbHelper.deleteEvent("Time", id);
         }
         finish();
     }

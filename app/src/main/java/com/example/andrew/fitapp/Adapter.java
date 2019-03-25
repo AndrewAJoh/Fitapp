@@ -52,7 +52,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "clicked on button");
-                Intent intent = new Intent(v.getContext(), NewEntry.class);
+                Intent intent = new Intent(v.getContext(), EventsOverviewActivity.class);
                 intent.putExtra("workoutName", result);
                 ((Activity) mContext).startActivity(intent);
             }

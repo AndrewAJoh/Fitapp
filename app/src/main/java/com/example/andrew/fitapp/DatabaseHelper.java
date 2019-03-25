@@ -190,36 +190,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return row_values;
     }
 
-    public boolean deleteData(String type, String weightOrTime, String ID){
-        //ID is either the workout name or the id of the entry to be deleted
-        //Delete entry from database
+    public boolean deleteActivity(String weightOrTime, String ID){
         SQLiteDatabase db = this.getWritableDatabase();
         long result0 = 0;
         long result1 = 0;
-        if (type.equals("0")) {
-            //deleting workout. Also deletes all entries for that workout
-            result0 = db.delete(TABLE_NAME, "Name = '" + ID + "'", null);
-            Log.d(TAG, "deleteData: Deleting " + ID + " " + " from " + TABLE_NAME);
-            if (weightOrTime.equals("weight")) {
-                result1 = db.delete(TABLE3_NAME, "Name = '" + ID + "'", null);
-                Log.d(TAG, "deleteData: Deleting " + ID + " " + " from " + TABLE3_NAME);
-            } else {
-                result1 = db.delete(TABLE2_NAME, "Name = '" + ID + "'", null);
-                Log.d(TAG, "deleteData: Deleting " + ID + " " + " from " + TABLE2_NAME);
-            }
-        } else{
-            if (weightOrTime.equals("Weight")){
-                result0 = db.delete(TABLE3_NAME, "ID = '" + ID + "'", null);
-            } else{
-                result0 = db.delete(TABLE2_NAME, "ID = '" + ID + "'", null);
-            }
+        result0 = db.delete(TABLE_NAME, "Name = '" + ID + "'", null);
+        Log.d(TAG, "deleteActivity: Deleting " + ID + " " + "from " + TABLE_NAME);
+        if (weightOrTime.equals("weight")) {
+            result1 = db.delete(TABLE3_NAME, "Name = '" + ID + "'", null);
+            Log.d(TAG, "deleteActivity: Deleting " + ID + " " + "from " + TABLE3_NAME);
+        } else {
+            result1 = db.delete(TABLE2_NAME, "Name = '" + ID + "'", null);
+            Log.d(TAG, "deleteActivity: Deleting " + ID + " " + "from " + TABLE2_NAME);
         }
         if (result0 == -1 || result1 == -1) {
-            Log.d(TAG, "deleteData: Failure");
+            Log.d(TAG, "deleteActivity: Failure");
             return false;
         }
         else{
-            Log.d(TAG, "deleteData: Success");
+            Log.d(TAG, "deleteActivity: Success");
+            return true;
+        }
+    }
+
+    public boolean deleteEvent(String weightOrTime, String ID) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long result = 0;
+        if (weightOrTime.equals("Weight")) {
+            result = db.delete(TABLE3_NAME, "ID = '" + ID + "'", null);
+            Log.d(TAG, "deleteEvent: Deleting " + ID + " " + "from " + TABLE3_NAME);
+        } else {
+            result = db.delete(TABLE2_NAME, "ID = '" + ID + "'", null);
+            Log.d(TAG, "deleteEvent: Deleting " + ID + " " + "from " + TABLE2_NAME);
+        }
+        if (result == -1) {
+            Log.d(TAG, "deleteEvent: Failure");
+            return false;
+        }
+        else {
+            Log.d(TAG, "deleteEvent: Success");
             return true;
         }
     }

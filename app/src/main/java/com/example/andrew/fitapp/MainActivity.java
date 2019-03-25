@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onActivityClick(View view) {
-        Intent intent = new Intent(this, OpenActivity.class);
+        Intent intent = new Intent(this, SelectActivity.class);
         String idString = view.getResources().getResourceEntryName(view.getId());
         intent.putExtra("workoutType", idString);
         startActivity(intent);
