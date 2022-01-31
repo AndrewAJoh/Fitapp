@@ -15,9 +15,9 @@ import android.util.Log;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "DatabaseHelper";
-    private static final String TABLE_NAME = "NameTable4";
-    private static final String TABLE2_NAME = "TimedTable4";
-    private static final String TABLE3_NAME = "WeightedTable2";
+    private static final String TABLE_NAME = "NameTable";
+    private static final String TABLE2_NAME = "TimedTable";
+    private static final String TABLE3_NAME = "WeightedTable";
     //Workout Name Table
     private static final String ACOL1 = "Name";
     private static final String ACOL2 = "Type";
@@ -46,16 +46,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "onCreate: started");
         String createTable1 = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ("+ACOL1 + " TEXT, " + ACOL2 + " TEXT, " + ACOL3 + " TEXT, " + ACOL4 + " TEXT, UNIQUE(" + ACOL1 + ", " + ACOL2 + "))";
+
         String initializeData1 = "INSERT INTO " + TABLE_NAME + " ("+ACOL1+", "+ACOL2+", "+ACOL3+", "+ACOL4+") VALUES " +
-                "('running', 'Cardio', 'Timed', 'False'), " +
-                "('swimming', 'Cardio', 'Timed', 'False'), " +
+        "('running', 'Cardio', 'Timed', 'False'), " +
+        "('swimming', 'Cardio', 'Timed', 'False'), " +
         "('biking', 'Cardio', 'Timed', 'False'), " +
         "('walking', 'Cardio', 'Timed', 'False'), " +
         "('barbell curl', 'Biceps', 'Weighted', 'False'), " +
         "('chin ups', 'Biceps', 'Weighted', 'False'), " +
         "('concentration curl', 'Biceps', 'Weighted', 'False'), " +
         "('incline dumbell curls', 'Biceps', 'Weighted', 'False'), " +
-                "('bench press', 'Chest', 'Weighted', 'False'), " +
+        "('bench press', 'Chest', 'Weighted', 'False'), " +
         "('inclide bench press', 'Chest', 'Weighted', 'False'), " +
         "('decline bench press', 'Chest', 'Weighted', 'False'), " +
         "('dumbell bench press', 'Chest', 'Weighted', 'False'), " +
@@ -72,55 +73,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         "('skull crushers', 'Triceps', 'Weighted', 'False'), " +
         "('rope pull-down', 'Triceps', 'Weighted', 'False'), " +
         "('tricep push-ups', 'Triceps', 'Weighted', 'True')";
+
         String createTable2 = "CREATE TABLE IF NOT EXISTS " + TABLE2_NAME + " (" + BCOL0 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + BCOL1 + " TEXT, " + BCOL4 + " TEXT, " +
                 BCOL2 + " REAL, " + BCOL3 + " REAL)";
-        /**
-        String initializeData2 = "INSERT INTO " + TABLE2_NAME + " ("+BCOL0+", "+BCOL1+", "+BCOL4+", "+BCOL2+", "+BCOL3+") VALUES " +
-                "(1, 'running', '2018-09-01', 1800, 4.5), " +
-                "(2, 'running', '2018-09-02', 2130, 5.5), " +
-                "(3, 'running', '2018-09-03', 900, 2.0), " +
-                "(4, 'running', '2018-09-04', 420, 1.2)";
-        String initializeData3 = "INSERT INTO " + TABLE2_NAME + " ("+BCOL0+", "+BCOL1+", "+BCOL4+", "+BCOL2+") VALUES " +
-                "(5, 'planks', '2018-09-05', 45), " +
-                "(6, 'planks', '2018-09-06', 60), " +
-                "(7, 'planks', '2018-09-07', 105), " +
-                "(8, 'planks', '2018-09-08', 165)";
-         */
         String createTable3 = "CREATE TABLE IF NOT EXISTS " + TABLE3_NAME + " (" + CCOL0 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + CCOL1 +
                 " TEXT, " + CCOL5 + " TEXT, " + CCOL2 + " TEXT, " + CCOL3 + " TEXT, " + CCOL4 + " TEXT)";
-
-        /**
-        String initializeData4 = "INSERT INTO " + TABLE3_NAME + " (" + CCOL0 + ", " + CCOL1 + ", " + CCOL5 + ", " + CCOL2 + ", " + CCOL3 + ", " + CCOL4 + ") VALUES " +
-                "(1, 'concentration curl', '2018-09-01', '45', '8', '3'), " +
-                "(2, 'concentration curl', '2018-09-02', '40', '8', '3'), " +
-                "(3, 'concentration curl', '2018-09-03', '40', '10', '3'), " +
-                "(4, 'concentration curl', '2018-09-04', '45', '6', '3')";
-        String initializeData5 = "INSERT INTO " + TABLE3_NAME + " (" + CCOL0 + ", " + CCOL1 + ", " + CCOL5 + ", " + CCOL3 + ", " + CCOL4 + ") VALUES " +
-                "(5, 'push-ups', '2018-09-05', '2', '20'), " +
-                "(6, 'push-ups', '2018-09-06', '3', '20'), " +
-                "(7, 'push-ups', '2018-09-07', '3', '25'), " +
-                "(8, 'push-ups', '2018-09-08', '4', '20')";
-        System.out.println(createTable1);
-        */
         db.execSQL(createTable1);
-        //System.out.println(initializeData1);
         db.execSQL(initializeData1);
-        //System.out.println(createTable2);
         db.execSQL(createTable2);
-        /**
-        System.out.println(initializeData2);
-        db.execSQL(initializeData2);
-        System.out.println(createTable3);
-         */
         db.execSQL(createTable3);
-        /**
-        System.out.println(initializeData3);
-        db.execSQL(initializeData3);
-        System.out.println(initializeData4);
-        db.execSQL(initializeData4);
-        System.out.println(initializeData5);
-        db.execSQL(initializeData5);
-         */
     }
 
     @Override

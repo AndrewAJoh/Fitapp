@@ -30,22 +30,17 @@ public class SelectActivity extends AppCompatActivity {
     private boolean created = false;
     Adapter adapter;
 
-    private List<String> cardioTypeList = new ArrayList<String>();
-    private List<String> bicepsTypeList = new ArrayList<String>();
-    private List<String> chestTypeList = new ArrayList<String>();
-    private List<String> legsTypeList = new ArrayList<String>();
-    private List<String> absTypeList = new ArrayList<String>();
-    private List<String> tricepsTypeList = new ArrayList<String>();
+    private List<String> workoutTypeList = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "OnCreate: started");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workouts_screen);
-        initData(getIntent().getStringExtra("workoutType"));
+        buttonName = getIntent().getStringExtra("workoutType");
+        initData();
+
         initRecyclerView();
-        dbHelper.getData("SELECT * FROM TimedTable4 WHERE Name = 'running'");
-        dbHelper.getData("SELECT * FROM WeightedTable2 WHERE Name = 'concentration curl'");
     }
 
     @Override
@@ -68,47 +63,15 @@ public class SelectActivity extends AppCompatActivity {
         }
     }
 
-    private void initData(String workoutType) {
+    private void initData() {
         String data;
-        String [] arrOfStr;
-        if (workoutType.equals("Cardio")) {
-            data = dbHelper.getData("SELECT NAME FROM NameTable4 WHERE Type = 'Cardio'");
-            arrOfStr = data.split(",");
-            for (int i = 0; i < arrOfStr.length; i++) {
-                cardioTypeList.add(arrOfStr[i]);
-            }
-        } else if (workoutType.equals("Biceps")) {
-            data = dbHelper.getData("SELECT NAME FROM NameTable4 WHERE Type = 'Biceps'");
-            arrOfStr = data.split(",");
-            for (int i = 0; i < arrOfStr.length; i++) {
-                bicepsTypeList.add(arrOfStr[i]);
-            }
-        } else if (workoutType.equals("Chest")) {
-            data = dbHelper.getData("SELECT NAME FROM NameTable4 WHERE Type = 'Chest'");
-            arrOfStr = data.split(",");
-            for (int i = 0; i < arrOfStr.length; i++) {
-                chestTypeList.add(arrOfStr[i]);
-            }
-        } else if (workoutType.equals("Legs")) {
-            data = dbHelper.getData("SELECT NAME FROM NameTable4 WHERE Type = 'Legs'");
-            arrOfStr = data.split(",");
-            for (int i = 0; i < arrOfStr.length; i++) {
-                legsTypeList.add(arrOfStr[i]);
-            }
-        } else if (workoutType.equals("Abs")) {
-            data = dbHelper.getData("SELECT NAME FROM NameTable4 WHERE Type = 'Abs'");
-            arrOfStr = data.split(",");
-            for (int i = 0; i < arrOfStr.length; i++) {
-                absTypeList.add(arrOfStr[i]);
-            }
-        } else if (workoutType.equals("Triceps")) {
-            data = dbHelper.getData("SELECT NAME FROM NameTable4 WHERE Type = 'Triceps'");
-            arrOfStr = data.split(",");
-            for (int i = 0; i < arrOfStr.length; i++) {
-                tricepsTypeList.add(arrOfStr[i]);
-            }
-        }
 
+        String query = "SELECT NAME FROM NameTable WHERE Type = '" + buttonName + "'";
+        data = dbHelper.getData(query);
+        String [] arrOfStr = data.split(",");
+        for (int i = 0; i < arrOfStr.length; i++){
+            workoutTypeList.add(arrOfStr[i]);
+        }
     }
 
 
@@ -133,19 +96,7 @@ public class SelectActivity extends AppCompatActivity {
                 boolean added = data.getBooleanExtra("added", false);
                 buttonName = getIntent().getStringExtra("workoutType");
                 if (added) {
-                    if (buttonName.equals("Cardio")) {
-                        cardioTypeList.add(addedWorkout);
-                    } else if (buttonName.equals("Biceps")){
-                        bicepsTypeList.add(addedWorkout);
-                    }else if (buttonName.equals("Chest")){
-                        chestTypeList.add(addedWorkout);
-                    }else if (buttonName.equals("Legs")){
-                        legsTypeList.add(addedWorkout);
-                    }else if (buttonName.equals("Abs")){
-                        absTypeList.add(addedWorkout);
-                    }else if (buttonName.equals("Triceps")){
-                        tricepsTypeList.add(addedWorkout);
-                    }
+                    workoutTypeList.add(addedWorkout);
                 } else{
                     Toast.makeText(this, "Workout already exists", Toast.LENGTH_LONG).show();
                 }
@@ -154,59 +105,15 @@ public class SelectActivity extends AppCompatActivity {
     }
 
     private void initRecyclerView(){
-        buttonName = getIntent().getStringExtra("workoutType");
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        if (buttonName.equals("Cardio")) {
-            Log.d(TAG, "initRecyclerView: init cardio recyclerview");
-            getSupportActionBar().setTitle("Cardio");
-            adapter = new Adapter(this, cardioTypeList);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.setAdapter(adapter);
 
+        String logMessage = "initRecyclerView: init " + buttonName + " recyclerView";
+        Log.d(TAG, logMessage);
+        adapter = new Adapter(this, workoutTypeList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
 
-        } else if (buttonName.equals("Biceps")) {
-            Log.d(TAG, "initRecyclerView: init bicep recyclerview");
-            getSupportActionBar().setTitle("Biceps");
-            adapter = new Adapter(this, bicepsTypeList);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.setAdapter(adapter);
-
-        }
-        else if (buttonName.equals("Chest")) {
-            Log.d(TAG, "initRecyclerView: init chest recyclerview");
-            getSupportActionBar().setTitle("Chest");
-            adapter = new Adapter(this, chestTypeList);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.setAdapter(adapter);
-
-        }
-        else if (buttonName.equals("Legs")) {
-            Log.d(TAG, "initRecyclerView: init legs recyclerview");
-            getSupportActionBar().setTitle("Legs");
-            adapter = new Adapter(this, legsTypeList);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.setAdapter(adapter);
-
-        }
-        else if (buttonName.equals("Abs")) {
-            Log.d(TAG, "initRecyclerView: init abs recyclerview");
-            getSupportActionBar().setTitle("Abs");
-            adapter = new Adapter(this, absTypeList);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.setAdapter(adapter);
-
-        }
-        else if (buttonName.equals("Triceps")) {
-            Log.d(TAG, "initRecyclerView: init tricep recyclerview");
-            getSupportActionBar().setTitle("Triceps");
-            adapter = new Adapter(this, tricepsTypeList);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.setAdapter(adapter);
-
-        }
-
-
-
+        getSupportActionBar().setTitle(buttonName);
     }
 
 

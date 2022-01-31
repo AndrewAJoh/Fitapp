@@ -25,9 +25,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private static final int SECOND_ACTIVITY_REQUEST_CODE = 0;
 
-    public static final String EXTRA_MESSAGE = "com.example.fitapp.MESSAGE";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "OnCreate: started");
