@@ -26,7 +26,7 @@ public class SelectActivity extends AppCompatActivity {
 
     DatabaseHelper dbHelper = new DatabaseHelper(this);
     private static final String TAG = "SelectActivity";
-    public String buttonName;
+    public String workoutType;
     private boolean created = false;
     Adapter adapter;
 
@@ -37,7 +37,7 @@ public class SelectActivity extends AppCompatActivity {
         Log.d(TAG, "OnCreate: started");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workouts_screen);
-        buttonName = getIntent().getStringExtra("workoutType");
+        workoutType = getIntent().getStringExtra("workoutType");
         initData();
 
         initRecyclerView();
@@ -66,7 +66,7 @@ public class SelectActivity extends AppCompatActivity {
     private void initData() {
         String data;
 
-        String query = "SELECT NAME FROM NameTable WHERE Type = '" + buttonName + "'";
+        String query = "SELECT NAME FROM " + DatabaseHelper.WORKOUT_TABLE_TITLE + " WHERE Type = '" + workoutType + "'";
         data = dbHelper.getData(query);
         String [] arrOfStr = data.split(",");
         for (int i = 0; i < arrOfStr.length; i++){
@@ -94,7 +94,7 @@ public class SelectActivity extends AppCompatActivity {
                 // get String data from Intent
                 String addedWorkout = data.getStringExtra("addedWorkout");
                 boolean added = data.getBooleanExtra("added", false);
-                buttonName = getIntent().getStringExtra("workoutType");
+                workoutType = getIntent().getStringExtra("workoutType");
                 if (added) {
                     workoutTypeList.add(addedWorkout);
                 } else{
@@ -107,13 +107,13 @@ public class SelectActivity extends AppCompatActivity {
     private void initRecyclerView(){
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
 
-        String logMessage = "initRecyclerView: init " + buttonName + " recyclerView";
+        String logMessage = "initRecyclerView: init " + workoutType + " recyclerView";
         Log.d(TAG, logMessage);
         adapter = new Adapter(this, workoutTypeList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        getSupportActionBar().setTitle(buttonName);
+        getSupportActionBar().setTitle(workoutType);
     }
 
 

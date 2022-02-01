@@ -20,48 +20,42 @@ import java.util.Date;
 public class AddEventActivity extends AppCompatActivity {
     private static final String TAG = "AddEvent";
     DatabaseHelper dbHelper = new DatabaseHelper(this);
-    private static String weightedOrTimed;
-    private static String simpleBoolean;
-    private static String name;
+    private static int workoutMeasurement;
+    private static String workoutName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "OnCreate: started");
         super.onCreate(savedInstanceState);
-        name = getIntent().getStringExtra("workoutName");
-        weightedOrTimed = dbHelper.getData("SELECT Measurement FROM NameTable4 WHERE Name = '" + name + "'");
-        simpleBoolean = dbHelper.getData("SELECT Simple FROM NameTable4 WHERE Name = '" + name + "'");
-        getSupportActionBar().setTitle(name);
-        if (weightedOrTimed.equals("Weighted")) {
-            //Weighted Activity
-            if (simpleBoolean.equals("False")) {
-                setContentView(R.layout.activity_add_event_weighted);
-                final EditText sets = findViewById(R.id.setsText);
-                final EditText reps = findViewById(R.id.repsText);
-                sets.addTextChangedListener(new TextWatcher() {
-                    public void onTextChanged (CharSequence s,int start, int before, int count){
-                        if (sets.getText().toString().trim().length() == 2)     //size as per your requirement
-                        {
-                            reps.requestFocus();
-                        }
+        workoutName = getIntent().getStringExtra("workoutName");
+        workoutMeasurement = Integer.parseInt(dbHelper.getData("SELECT Measurement FROM WORKOUTS WHERE Name = '" + workoutName + "'"));
+        getSupportActionBar().setTitle(workoutName);
+        if (workoutMeasurement == 1) { //Reps and Weight
+            setContentView(R.layout.activity_add_event_weighted);
+            final EditText sets = findViewById(R.id.setsText);
+            final EditText reps = findViewById(R.id.repsText);
+            sets.addTextChangedListener(new TextWatcher() { //TODO: Re-evaluate this
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (sets.getText().toString().trim().length() == 2) {
+                        reps.requestFocus();
                     }
+                }
 
-                    public void beforeTextChanged(CharSequence s, int start,
-                                                  int count, int after) {
-                    }
+                public void beforeTextChanged(CharSequence s, int start,
+                                              int count, int after) {
+                }
 
-                    public void afterTextChanged(Editable s) {
-                    }
-                });
-            } else{
+                public void afterTextChanged(Editable s) {
+                }
+            });
+        } else if (workoutMeasurement == 2){
                 setContentView(R.layout.activity_add_event_reps);
-            }
         } else{
             //Timed activity
-            if (simpleBoolean.equals("False")){
+            if (workoutMeasurement == 3){ //Time and Distance
                 setContentView(R.layout.activity_add_event);
 
-            } else if (simpleBoolean.equals("True")){
+            } else if (workoutMeasurement == 4){ //Time
                 setContentView(R.layout.activity_add_event_timed_simple);
             }
 
@@ -69,9 +63,10 @@ public class AddEventActivity extends AppCompatActivity {
             final EditText hours = findViewById(R.id.hhText);
             final EditText minutes = findViewById(R.id.mmText);
             final EditText seconds = findViewById(R.id.ssText);
-            hours.addTextChangedListener(new TextWatcher() {
-                public void onTextChanged (CharSequence s,int start, int before, int count){
-                    if (hours.getText().toString().trim().length() == 2)     //size as per your requirement
+
+            hours.addTextChangedListener(new TextWatcher() { //TODO: Re-evaluate this
+                public void onTextChanged (CharSequence s, int start, int before, int count){
+                    if (hours.getText().toString().trim().length() == 2)
                     {
                         minutes.requestFocus();
                     }
@@ -84,9 +79,10 @@ public class AddEventActivity extends AppCompatActivity {
                 public void afterTextChanged(Editable s) {
                 }
             });
+
             minutes.addTextChangedListener(new TextWatcher() {
-                public void onTextChanged (CharSequence s,int start, int before, int count){
-                    if (minutes.getText().toString().trim().length() == 2)     //size as per your requirement
+                public void onTextChanged (CharSequence s, int start, int before, int count){
+                    if (minutes.getText().toString().trim().length() == 2)
                     {
                         seconds.requestFocus();
                     }
@@ -101,136 +97,142 @@ public class AddEventActivity extends AppCompatActivity {
             });
         }
 
-
     }
 
     public void onAddClick(View view) {
         Boolean acceptable = true;
         Intent intent = new Intent();
-        if (weightedOrTimed.equals("Weighted")) {
-            if (simpleBoolean.equals("False")) {
-                //Reps and Weights Activity
-                EditText setsText = findViewById(R.id.setsText);
-                EditText repsText = findViewById(R.id.repsText);
-                String setsString = setsText.getText().toString();
-                String repsString = repsText.getText().toString();
-                EditText weightText = findViewById(R.id.weightText);
-                String weightString = weightText.getText().toString();
-                String newEventName = getIntent().getStringExtra("workoutName");
-                Date cDate = new Date();
-                String fDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
-                dbHelper.addData("C", newEventName, weightString, repsString, setsString, fDate);
-            } else{
-                //Reps Activity
-                EditText setsText = findViewById(R.id.setsText);
-                EditText repsText = findViewById(R.id.repsText);
-                String setsString = setsText.getText().toString();
-                String repsString = repsText.getText().toString();
-                String newEventName = getIntent().getStringExtra("workoutName");
-                Date cDate = new Date();
-                String fDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
-                dbHelper.addData("C", newEventName, null, repsString, setsString, fDate);
+
+        ActivityData newActivity;
+        String newActivityName = getIntent().getStringExtra("workoutName");
+
+        if (workoutMeasurement == 1){
+            //Reps and Weights Activity
+            EditText setsText = findViewById(R.id.setsText);
+            EditText repsText = findViewById(R.id.repsText);
+            EditText weightText = findViewById(R.id.weightText);
+
+            String setsString = setsText.getText().toString();
+            String repsString = repsText.getText().toString();
+            String weightString = weightText.getText().toString();
+
+
+            Date cDate = new Date();
+            //String fDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate); TODO: fix dates
+            //TODO: Add acceptable check
+
+            newActivity = new ActivityData(newActivityName, null, null, null, weightString, repsString, setsString);
+
+
+        } else if (workoutMeasurement == 2){
+            //Reps Activity
+            EditText setsText = findViewById(R.id.setsText);
+            EditText repsText = findViewById(R.id.repsText);
+
+            String setsString = setsText.getText().toString();
+            String repsString = repsText.getText().toString();
+
+            Date cDate = new Date();
+            //String fDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
+
+            newActivity = new ActivityData(newActivityName, null, null, null, null, repsString, setsString);
+
+        } else if (workoutMeasurement == 3){
+            //Time and Distance Activity
+            EditText hoursText = findViewById(R.id.hhText);
+            String hoursString = hoursText.getText().toString();
+
+            EditText minutesText = findViewById(R.id.mmText);
+            String minutesString = minutesText.getText().toString();
+
+            EditText secondsText = findViewById(R.id.ssText);
+            String secondsString = secondsText.getText().toString();
+
+            EditText distanceText = findViewById(R.id.distanceText);
+            String distanceEditText = distanceText.getText().toString();
+
+            if (hoursString.matches("") ||
+                minutesString.matches("") ||
+                secondsString.matches("") ||
+                distanceEditText.matches("")){
+                acceptable = false;
+            }
+
+            int hours = Integer.parseInt(hoursText.getText().toString());
+            int minutes = Integer.parseInt(minutesText.getText().toString());
+            int seconds = Integer.parseInt(secondsText.getText().toString());
+
+            if (minutes > 59 || seconds > 59){
+                acceptable = false;
+            }
+
+            int total = hours*3600;
+            total += (minutes * 60);
+            total += seconds;
+
+            String timeString = Integer.toString(total);
+            String distanceString = distanceText.getText().toString();
+
+            Date cDate = new Date();
+            String fDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
+
+            newActivity = new ActivityData(newActivityName, null, timeString, distanceString, null, null, null);
+
+            if (!acceptable) {
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Please enter a valid time",
+                        Toast.LENGTH_SHORT);
+                toast.show();
             }
         } else{
-            //Time
-            if (simpleBoolean.equals("False")){
-                //Time and Distance Activity
-                EditText hoursText = findViewById(R.id.hhText);
-                String hoursString = hoursText.getText().toString();
-                if (hoursString.matches("")){
-                    acceptable = false;
-                }
-                EditText minutesText = findViewById(R.id.mmText);
-                String minutesString = minutesText.getText().toString();
-                if (minutesString.matches("")){
-                    acceptable = false;
-                }
-                EditText secondsText = findViewById(R.id.ssText);
-                String secondsString = secondsText.getText().toString();
-                if (secondsString.matches("")){
-                    acceptable = false;
-                }
-                EditText distanceText = findViewById(R.id.distanceText);
-                String distanceEditText = distanceText.getText().toString();
-                if (distanceEditText.matches("")){
-                    acceptable = false;
-                }
-                int hours = Integer.parseInt(hoursText.getText().toString());
-                int minutes = Integer.parseInt(minutesText.getText().toString());
+            //Time Activity
+            EditText hoursText = findViewById(R.id.hhText);
+            String hoursString = hoursText.getText().toString();
 
-                if (minutes > 59){
-                    acceptable = false;
-                }
-                int seconds = Integer.parseInt(secondsText.getText().toString());
-                if (seconds > 59){
-                    acceptable = false;
-                }
-                int total = hours*3600;
-                total += (minutes * 60);
-                total += seconds;
-                String timeString = Integer.toString(total);
-                String distanceString = distanceText.getText().toString();
-                String newEventName = getIntent().getStringExtra("workoutName");
-                Date cDate = new Date();
-                String fDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
-                if (acceptable) {
-                    dbHelper.addData("B", newEventName, timeString, distanceString, null, fDate);
-                } else{
-                    Toast toast = Toast.makeText(getApplicationContext(),
-                            "Please enter a valid time",
-                            Toast.LENGTH_SHORT);
-                    toast.show();
-                }
-            } else if (simpleBoolean.equals("True")){
-                //Time Activity
-                EditText hoursText = findViewById(R.id.hhText);
-                String hoursString = hoursText.getText().toString();
-                if (hoursString.matches("")){
-                    acceptable = false;
-                }
-                EditText minutesText = findViewById(R.id.mmText);
-                String minutesString = minutesText.getText().toString();
-                if (minutesString.matches("")){
-                    acceptable = false;
-                }
-                EditText secondsText = findViewById(R.id.ssText);
-                String secondsString = secondsText.getText().toString();
-                if (secondsString.matches("")){
-                    acceptable = false;
-                }
-                int hours = Integer.parseInt(hoursText.getText().toString());
-                int minutes = Integer.parseInt(minutesText.getText().toString());
-                if (minutes > 59 ){
-                    acceptable = false;
-                }
-                int seconds = Integer.parseInt(secondsText.getText().toString());
-                if (seconds > 59){
-                    acceptable = false;
-                }
-                int total = hours*3600;
-                total += (minutes * 60);
-                total += seconds;
-                String timeString = Integer.toString(total);
-                String newEventName = getIntent().getStringExtra("workoutName");
-                Date cDate = new Date();
-                String fDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
-                if (acceptable) {
-                    dbHelper.addData("B", newEventName, timeString, null, null, fDate);
-                } else{
-                    Toast toast = Toast.makeText(getApplicationContext(),
-                            "Please enter a valid time",
-                            Toast.LENGTH_SHORT);
-                    toast.show();
-                }
+            EditText minutesText = findViewById(R.id.mmText);
+            String minutesString = minutesText.getText().toString();
+
+            EditText secondsText = findViewById(R.id.ssText);
+            String secondsString = secondsText.getText().toString();
+
+            if (hoursString.matches("") ||
+                minutesString.matches("") ||
+                secondsString.matches("")){
+                acceptable = false;
+            }
+            int hours = Integer.parseInt(hoursText.getText().toString());
+            int minutes = Integer.parseInt(minutesText.getText().toString());
+            int seconds = Integer.parseInt(secondsText.getText().toString());
+
+            if (minutes > 59 || seconds > 59){
+                acceptable = false;
+            }
+
+            int total = hours*3600;
+            total += (minutes * 60);
+            total += seconds;
+
+            String timeString = Integer.toString(total);
+
+            Date cDate = new Date();
+            String fDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
+
+            newActivity = new ActivityData(newActivityName, null, timeString, null, null, null, null);
+
+            if (!acceptable){
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Please enter a valid time",
+                        Toast.LENGTH_SHORT);
+                toast.show();
             }
         }
+
         if (acceptable) {
+            dbHelper.addActivityData(newActivity);
             setResult(RESULT_OK, intent);
             finish();
         }
     }
-
-
 
     public void onCancelClick(View view){
         finish();

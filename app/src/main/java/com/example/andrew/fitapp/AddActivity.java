@@ -35,34 +35,30 @@ public class AddActivity extends AppCompatActivity {
 
     public void onAddClick(View view) {
         EditText addText = findViewById(R.id.submissionText);
-        //result contains the new Workout name
-        String result = addText.getText().toString();
-        result = result.toLowerCase();
-        String newWorkoutType = getIntent().getStringExtra("workoutType");
-        boolean resultBoolean = false;
+        String workoutName = addText.getText().toString().toLowerCase();
+        String workoutType = getIntent().getStringExtra("workoutType");
 
         int radioId = radioGroup.getCheckedRadioButtonId();
         radioButton = findViewById(radioId);
-        String simpleBoolean;
-        String weightedOrTimed;
-        if (radioButton.getText().toString().equals("Reps")){
-            simpleBoolean = "True";
-            weightedOrTimed = "Weighted";
-        } else if (radioButton.getText().toString().equals("Time")){
-            simpleBoolean = "True";
-            weightedOrTimed = "Timed";
+        int workoutMeasurement;
+
+        if (radioButton.getText().toString().equals("Reps and Weight")){
+            workoutMeasurement = 1;
+        } else if (radioButton.getText().toString().equals("Reps")){
+            workoutMeasurement = 2;
         } else if (radioButton.getText().toString().equals("Time and Distance")){
-            simpleBoolean = "False";
-            weightedOrTimed = "Timed";
-        } else{
-            simpleBoolean = "False";
-            weightedOrTimed = "Weighted";
+            workoutMeasurement = 3;
+        } else { //Time
+            workoutMeasurement = 4;
         }
-        resultBoolean = dbHelper.addData("A", result, newWorkoutType, weightedOrTimed, simpleBoolean, null);
+
+        WorkoutData w = new WorkoutData(workoutName, workoutType, workoutMeasurement);
+
+        boolean addWorkoutDataResult = dbHelper.addWorkoutData(w);
 
         Intent intent = new Intent();
-        intent.putExtra("addedWorkout", result);
-        intent.putExtra("added", resultBoolean);
+        intent.putExtra("addedWorkout", workoutName);
+        intent.putExtra("added", addWorkoutDataResult);
         //Duplicate values are being added to the list regardless, need to set added to false if a pair (name, type) already exists
         setResult(RESULT_OK, intent);
         finish();

@@ -15,112 +15,141 @@ import android.util.Log;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "DatabaseHelper";
-    private static final String TABLE_NAME = "NameTable";
-    private static final String TABLE2_NAME = "TimedTable";
-    private static final String TABLE3_NAME = "WeightedTable";
-    //Workout Name Table
-    private static final String ACOL1 = "Name";
-    private static final String ACOL2 = "Type";
-    private static final String ACOL3 = "Measurement";
-    private static final String ACOL4 = "Simple";
-    //Timed Table
-    private static final String BCOL0 = "ID";
-    private static final String BCOL1 = "Name";
-    private static final String BCOL4 = "Date";
-    private static final String BCOL2 = "Time";
-    private static final String BCOL3 = "Distance";
-    //Weight Table
-    private static final String CCOL0 = "ID";
-    private static final String CCOL1 = "Name";
-    private static final String CCOL5 = "Date";
-    private static final String CCOL2 = "Weight";
-    private static final String CCOL3 = "Reps";
-    private static final String CCOL4 = "Sets";
+    private static final String DATABASE_NAME = "FIT";
+    public static final String WORKOUT_TABLE_TITLE = "WORKOUTS";
+    public static final String ACTIVITY_TABLE_TITLE = "ACTIVITY";
+
+    //Workout Table
+    private static final String WORKOUT_TABLE_NAME = "Name";
+    private static final String WORKOUT_TABLE_TYPE = "Type";
+    private static final String WORKOUT_TABLE_MEASUREMENT = "Measurement";
+    //Activity Table
+    private static final String ACTIVITY_TABLE_ID = "ID";
+    private static final String ACTIVITY_TABLE_NAME = "Name";
+    private static final String ACTIVITY_TABLE_DATE = "Date";
+    private static final String ACTIVITY_TABLE_TIME = "Time";
+    private static final String ACTIVITY_TABLE_DISTANCE = "Distance";
+    private static final String ACTIVITY_TABLE_WEIGHT = "Weight";
+    private static final String ACTIVITY_TABLE_REPS = "Reps";
+    private static final String ACTIVITY_TABLE_SETS = "Sets";
+
+    private static final String WORKOUT_TABLE_INITIAL_ROWS =
+        "('running', 'Cardio', 3), " +
+        "('swimming', 'Cardio', 3), " +
+        "('biking', 'Cardio', 3), " +
+        "('walking', 'Cardio', 3), " +
+        "('barbell curl', 'Biceps', 1), " +
+        "('chin ups', 'Biceps', 1), " +
+        "('concentration curl', 'Biceps', 1), " +
+        "('incline dumbell curls', 'Biceps', 1), " +
+        "('bench press', 'Chest', 1), " +
+        "('inclide bench press', 'Chest', 1), " +
+        "('decline bench press', 'Chest', 1), " +
+        "('dumbell bench press', 'Chest', 1), " +
+        "('fly', 'Chest', 1), " +
+        "('push-ups', 'Chest', 2), " +
+        "('squat', 'Legs', 1), " +
+        "('calf raises', 'Legs', 1), " +
+        "('dumbell lunges', 'Legs', 1), " +
+        "('planks', 'Abs', 4), " +
+        "('crunches', 'Abs', 2), " +
+        "('sit-ups', 'Abs', 2), " +
+        "('leg raises', 'Abs', 2), " +
+        "('standing dumbell triceps extension', 'Triceps', 1), " +
+        "('skull crushers', 'Triceps', 1), " +
+        "('rope pull-down', 'Triceps', 1), " +
+        "('tricep push-ups', 'Triceps', 2)";
 
 
     public DatabaseHelper(Context context) {
-        super(context, TABLE_NAME, null, 1);
+        super(context, DATABASE_NAME, null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "onCreate: started");
-        String createTable1 = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ("+ACOL1 + " TEXT, " + ACOL2 + " TEXT, " + ACOL3 + " TEXT, " + ACOL4 + " TEXT, UNIQUE(" + ACOL1 + ", " + ACOL2 + "))";
+        String createWorkoutTable =
+            "CREATE TABLE IF NOT EXISTS " + WORKOUT_TABLE_TITLE + " (" +
+            WORKOUT_TABLE_NAME          + " TEXT, " +
+            WORKOUT_TABLE_TYPE          + " TEXT, " +
+            WORKOUT_TABLE_MEASUREMENT   + " INTEGER, " +
+            "UNIQUE(" + WORKOUT_TABLE_NAME + ", " + WORKOUT_TABLE_TYPE + "))";
+        Log.d(TAG, createWorkoutTable);
 
-        String initializeData1 = "INSERT INTO " + TABLE_NAME + " ("+ACOL1+", "+ACOL2+", "+ACOL3+", "+ACOL4+") VALUES " +
-        "('running', 'Cardio', 'Timed', 'False'), " +
-        "('swimming', 'Cardio', 'Timed', 'False'), " +
-        "('biking', 'Cardio', 'Timed', 'False'), " +
-        "('walking', 'Cardio', 'Timed', 'False'), " +
-        "('barbell curl', 'Biceps', 'Weighted', 'False'), " +
-        "('chin ups', 'Biceps', 'Weighted', 'False'), " +
-        "('concentration curl', 'Biceps', 'Weighted', 'False'), " +
-        "('incline dumbell curls', 'Biceps', 'Weighted', 'False'), " +
-        "('bench press', 'Chest', 'Weighted', 'False'), " +
-        "('inclide bench press', 'Chest', 'Weighted', 'False'), " +
-        "('decline bench press', 'Chest', 'Weighted', 'False'), " +
-        "('dumbell bench press', 'Chest', 'Weighted', 'False'), " +
-        "('fly', 'Chest', 'Weighted', 'False'), " +
-        "('push-ups', 'Chest', 'Weighted', 'True'), " +
-        "('squat', 'Legs', 'Weighted', 'False'), " +
-        "('calf raises', 'Legs', 'Weighted', 'False'), " +
-        "('dumbell lunges', 'Legs', 'Weighted', 'False'), " +
-        "('planks', 'Abs', 'Timed', 'True'), " +
-        "('crunches', 'Abs', 'Weighted', 'True'), " +
-        "('sit-ups', 'Abs', 'Weighted', 'True'), " +
-        "('leg raises', 'Abs', 'Weighted', 'True'), " +
-        "('standing dumbell triceps extension', 'Triceps', 'Weighted', 'False'), " +
-        "('skull crushers', 'Triceps', 'Weighted', 'False'), " +
-        "('rope pull-down', 'Triceps', 'Weighted', 'False'), " +
-        "('tricep push-ups', 'Triceps', 'Weighted', 'True')";
+        String initializeWorkoutTableData =
+            "INSERT INTO " + WORKOUT_TABLE_TITLE + " ("+
+            WORKOUT_TABLE_NAME          + ", " +
+            WORKOUT_TABLE_TYPE          + ", " +
+            WORKOUT_TABLE_MEASUREMENT   + ") VALUES " +
+            WORKOUT_TABLE_INITIAL_ROWS;
 
-        String createTable2 = "CREATE TABLE IF NOT EXISTS " + TABLE2_NAME + " (" + BCOL0 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + BCOL1 + " TEXT, " + BCOL4 + " TEXT, " +
-                BCOL2 + " REAL, " + BCOL3 + " REAL)";
-        String createTable3 = "CREATE TABLE IF NOT EXISTS " + TABLE3_NAME + " (" + CCOL0 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + CCOL1 +
-                " TEXT, " + CCOL5 + " TEXT, " + CCOL2 + " TEXT, " + CCOL3 + " TEXT, " + CCOL4 + " TEXT)";
-        db.execSQL(createTable1);
-        db.execSQL(initializeData1);
-        db.execSQL(createTable2);
-        db.execSQL(createTable3);
+        String createActivityTable =
+            "CREATE TABLE IF NOT EXISTS " + ACTIVITY_TABLE_TITLE + " (" +
+            ACTIVITY_TABLE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            ACTIVITY_TABLE_NAME         + " TEXT, " +
+            ACTIVITY_TABLE_DATE         + " DATE, " +
+            ACTIVITY_TABLE_TIME         + " REAL, " +
+            ACTIVITY_TABLE_DISTANCE     + " REAL, " +
+            ACTIVITY_TABLE_WEIGHT       + " TEXT, " +
+            ACTIVITY_TABLE_REPS         + " INTEGER, " +
+            ACTIVITY_TABLE_SETS         + " INTEGER)";
+
+        db.execSQL(createWorkoutTable);
+        db.execSQL(initializeWorkoutTableData);
+        db.execSQL(createActivityTable);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + WORKOUT_TABLE_NAME);
         onCreate(db);
     }
 
-    public boolean addData(String table, String item1, String item2, String item3, String item4, String item5){
+    public boolean addWorkoutData(WorkoutData workout){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        String tableName = "none";
-        if (table.equals("A")) {
-            contentValues.put(ACOL1, item1);
-            contentValues.put(ACOL2, item2);
-            contentValues.put(ACOL3, item3);
-            contentValues.put(ACOL4, item4);
-            tableName = "NameTable4";
-        } else if (table.equals("B")){
-            contentValues.put(BCOL1, item1);
-            contentValues.put(BCOL4, item5); //date
-            contentValues.put(BCOL2, item2);
-            contentValues.put(BCOL3, item3);
-            tableName = "TimedTable4";
-        } else if (table.equals("C")){
-            contentValues.put(CCOL1, item1);
-            contentValues.put(CCOL5, item5); //date
-            contentValues.put(CCOL2, item2);
-            contentValues.put(CCOL3, item3);
-            contentValues.put(CCOL4, item4);
-            tableName = "WeightedTable2";
-        }
-        Log.d(TAG, "addData: Adding " + item1 + ", " + item2 + ", " + item5 + ", " + item3 + ", " + item4 + " to " + tableName);
-        long result = db.insert(tableName, null, contentValues);
+
+        contentValues.put(WORKOUT_TABLE_NAME, workout.name);
+        contentValues.put(WORKOUT_TABLE_TYPE, workout.type);
+        contentValues.put(WORKOUT_TABLE_MEASUREMENT, workout.measurement);
+
+        Log.d(TAG, "addData: Adding " +
+        workout.name + ", " +
+        workout.type + ", " +
+        workout.measurement + " to " +
+        WORKOUT_TABLE_TITLE);
+
+        long result = db.insert(WORKOUT_TABLE_TITLE, null, contentValues);
+
         if (result == -1) {
             Log.d(TAG, "addData: Failure");
             return false;
         }
         else{
+            Log.d(TAG, "addData: Success");
+            return true;
+        }
+    }
+
+    public boolean addActivityData(ActivityData activity){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(ACTIVITY_TABLE_NAME, activity.name);
+        //contentValues.put(ACTIVITY_TABLE_DATE, activity.date);
+        contentValues.put(ACTIVITY_TABLE_TIME, activity.time);
+        contentValues.put(ACTIVITY_TABLE_DISTANCE, activity.distance);
+        contentValues.put(ACTIVITY_TABLE_WEIGHT, activity.weight);
+        contentValues.put(ACTIVITY_TABLE_SETS, activity.sets);
+        contentValues.put(ACTIVITY_TABLE_REPS, activity.reps);
+
+        long result = db.insert(ACTIVITY_TABLE_TITLE, null, contentValues);
+
+        if (result == -1) {
+            Log.d(TAG, "addData: Failure");
+            return false;
+        }
+        else {
             Log.d(TAG, "addData: Success");
             return true;
         }
@@ -155,14 +184,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         long result0 = 0;
         long result1 = 0;
-        result0 = db.delete(TABLE_NAME, "Name = '" + ID + "'", null);
-        Log.d(TAG, "deleteActivity: Deleting " + ID + " " + "from " + TABLE_NAME);
+        result0 = db.delete(WORKOUT_TABLE_TITLE, "Name = '" + ID + "'", null);
+        Log.d(TAG, "deleteActivity: Deleting " + ID + " " + "from " + WORKOUT_TABLE_TITLE);
         if (weightOrTime.equals("weight")) {
-            result1 = db.delete(TABLE3_NAME, "Name = '" + ID + "'", null);
-            Log.d(TAG, "deleteActivity: Deleting " + ID + " " + "from " + TABLE3_NAME);
+            result1 = db.delete(ACTIVITY_TABLE_TITLE, "Name = '" + ID + "'", null);
+            Log.d(TAG, "deleteActivity: Deleting " + ID + " " + "from " + ACTIVITY_TABLE_TITLE);
         } else {
-            result1 = db.delete(TABLE2_NAME, "Name = '" + ID + "'", null);
-            Log.d(TAG, "deleteActivity: Deleting " + ID + " " + "from " + TABLE2_NAME);
+            result1 = db.delete(ACTIVITY_TABLE_TITLE, "Name = '" + ID + "'", null);
+            Log.d(TAG, "deleteActivity: Deleting " + ID + " " + "from " + ACTIVITY_TABLE_TITLE);
         }
         if (result0 == -1 || result1 == -1) {
             Log.d(TAG, "deleteActivity: Failure");
@@ -178,11 +207,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         long result = 0;
         if (weightOrTime.equals("Weight")) {
-            result = db.delete(TABLE3_NAME, "ID = '" + ID + "'", null);
-            Log.d(TAG, "deleteEvent: Deleting " + ID + " " + "from " + TABLE3_NAME);
+            result = db.delete(ACTIVITY_TABLE_TITLE, "ID = '" + ID + "'", null);
+            Log.d(TAG, "deleteEvent: Deleting " + ID + " " + "from " + ACTIVITY_TABLE_TITLE);
         } else {
-            result = db.delete(TABLE2_NAME, "ID = '" + ID + "'", null);
-            Log.d(TAG, "deleteEvent: Deleting " + ID + " " + "from " + TABLE2_NAME);
+            result = db.delete(ACTIVITY_TABLE_TITLE, "ID = '" + ID + "'", null);
+            Log.d(TAG, "deleteEvent: Deleting " + ID + " " + "from " + ACTIVITY_TABLE_TITLE);
         }
         if (result == -1) {
             Log.d(TAG, "deleteEvent: Failure");
