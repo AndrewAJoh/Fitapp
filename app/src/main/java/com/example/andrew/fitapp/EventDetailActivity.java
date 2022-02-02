@@ -9,142 +9,102 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.util.List;
+
 /**
  * Created by Andrew on 9/6/2018.
  */
 
 public class EventDetailActivity extends AppCompatActivity {
     private static final String TAG = "EntryDetail";
-    private static String id;
-    private static String name;
-    private static String date;
-    private static String time;
-    private static String distance;
-    private static String weightedOrTimed;
-    private static String simpleBoolean;
-    private static String type;
-    private static String weight;
-    private static String sets;
-    private static String reps;
-    private static String setsReps;
     DatabaseHelper dbHelper;
+    private static int measurement;
+    private static String activityId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "OnCreate: started");
         super.onCreate(savedInstanceState);
         dbHelper = new DatabaseHelper(this);
-        name = getIntent().getStringExtra("workoutName");
-        String outputName = name.substring(0, 1).toUpperCase() + name.substring(1);
-        date = getIntent().getStringExtra("date");
-        id = getIntent().getStringExtra("id");
-        weightedOrTimed = dbHelper.getData("SELECT Measurement FROM NameTable4 WHERE Name = '" + name + "'");
-        simpleBoolean = dbHelper.getData("SELECT Simple FROM NameTable4 WHERE Name = '" + name + "'");
-        type = dbHelper.getData("SELECT Type FROM NameTable4 WHERE Name = '" + name + "'");
-        if (weightedOrTimed.equals("Weighted")) {
-            if (simpleBoolean.equals("False")) {
-                setContentView(R.layout.activity_entry_detail_weights);
-                TextView workoutTypeDisplayRight = (TextView) findViewById(R.id.workoutTypeDisplayRight);
-                workoutTypeDisplayRight.setText(type);
-                TextView workoutNameDisplayRight = (TextView) findViewById(R.id.workoutNameDisplayRight);
-                workoutNameDisplayRight.setText(outputName);
-                TextView dateRight = (TextView) findViewById(R.id.dateRight);
-                dateRight.setText(date);
-                TextView weightRight = (TextView) findViewById(R.id.weightRight);
-                weight = dbHelper.getData("SELECT Weight FROM WeightedTable2 WHERE ID = '" + id + "'");
-                weightRight.setText(weight);
-                TextView repsSetsRight = (TextView) findViewById(R.id.repsSetsRight);
-                sets = dbHelper.getData("SELECT Sets FROM WeightedTable2 WHERE ID = '" + id + "'");
-                reps = dbHelper.getData("SELECT Reps FROM WeightedTable2 WHERE ID = '" + id + "'");
-                setsReps = sets + " x " + reps;
-                repsSetsRight.setText(setsReps);
-            } else{
-                setContentView(R.layout.activity_entry_detail_weights_simple);
-                TextView workoutTypeDisplayRight = (TextView) findViewById(R.id.workoutTypeDisplayRight);
-                workoutTypeDisplayRight.setText(type);
-                TextView workoutNameDisplayRight = (TextView) findViewById(R.id.workoutNameDisplayRight);
-                workoutNameDisplayRight.setText(outputName);
-                TextView dateRight = (TextView) findViewById(R.id.dateRight);
-                dateRight.setText(date);
-                TextView repsRight = (TextView) findViewById(R.id.repsRight);
-                sets = dbHelper.getData("SELECT Sets FROM WeightedTable2 WHERE ID = '" + id + "'");
-                reps = dbHelper.getData("SELECT Reps FROM WeightedTable2 WHERE ID = '" + id + "'");
-                setsReps = sets + " x " + reps;
-                repsRight.setText(setsReps);
-            }
-        } else{
-            if (simpleBoolean.equals("False")) {
+        String workoutName = getIntent().getStringExtra("workoutName");
+        String formattedWorkoutName = workoutName.substring(0, 1).toUpperCase() + workoutName.substring(1);
+        String date = getIntent().getStringExtra("date");
+        activityId = getIntent().getStringExtra("id");
+
+        String query = "SELECT Measurement FROM " + DatabaseHelper.WORKOUT_TABLE_TITLE + " WHERE Name = '" + workoutName + "'";
+        WorkoutData workoutData = dbHelper.getWorkoutData(query);
+        measurement = workoutData.measurement;
+
+        TextView workoutNameDisplayRight = findViewById(R.id.workoutNameDisplayRight);
+        TextView workoutTypeDisplayRight = findViewById(R.id.workoutTypeDisplayRight);
+        workoutNameDisplayRight.setText(formattedWorkoutName);
+
+        ActivityData activityData = dbHelper.getActivityDataById(activityId);
+
+        if (measurement == 1) {
+            setContentView(R.layout.activity_entry_detail_weights);
+
+            String weight = activityData.weight;
+            String setsReps = activityData.sets + " x " + activityData.reps;
+
+            workoutTypeDisplayRight.setText("Weight and Reps");
+
+            TextView dateRight = findViewById(R.id.dateRight);
+            dateRight.setText(date);
+
+            TextView weightRight = findViewById(R.id.weightRight);
+            weightRight.setText(weight);
+
+            TextView repsSetsRight = findViewById(R.id.repsSetsRight);
+
+            repsSetsRight.setText(setsReps);
+        } else if (measurement == 2){
+            setContentView(R.layout.activity_entry_detail_weights_simple);
+
+            String setsReps = activityData.sets + " x " + activityData.reps;
+
+            workoutTypeDisplayRight.setText("Reps");
+
+            TextView dateRight = findViewById(R.id.dateRight);
+            dateRight.setText(date);
+
+            TextView repsRight = findViewById(R.id.repsRight);
+            repsRight.setText(setsReps);
+        } else {
+            if (measurement == 3) {
                 setContentView(R.layout.activity_entry_detail_distance);
+                workoutTypeDisplayRight.setText("Time and Distance");
+                TextView distanceRight = findViewById(R.id.distanceRight);
+                String distance = activityData.distance;
+                distanceRight.setText(distance);
             } else {
                 setContentView(R.layout.activity_entry_detail_simple);
+                workoutTypeDisplayRight.setText("Time");
             }
-            TextView workoutTypeDisplayRight = (TextView) findViewById(R.id.workoutTypeDisplayRight);
-            workoutTypeDisplayRight.setText(type);
-            TextView workoutNameDisplayRight = (TextView) findViewById(R.id.workoutNameDisplayRight);
-            workoutNameDisplayRight.setText(outputName);
-            TextView dateRight = (TextView) findViewById(R.id.dateRight);
+
+            TextView dateRight = findViewById(R.id.dateRight);
             dateRight.setText(date);
-            TextView timeRight = (TextView) findViewById(R.id.timeRight);
-            time = dbHelper.getData("SELECT Time FROM TimedTable4 WHERE ID = '" + id + "'");
-            //edit the time
-            String finalTime = "";
-            int totalSeconds = Integer.parseInt(time);
-            int hours = totalSeconds/3600;
-            if (hours == 0){
-                finalTime += "00";
-            } else if (hours < 10 && hours > 0){
-                finalTime += "0";
-                finalTime += Integer.toString(hours);
-            } else{
-                finalTime+= Integer.toString(hours);
-            }
-            totalSeconds = totalSeconds - (hours * 3600);
-            int minutes = totalSeconds/60;
-            totalSeconds = totalSeconds - (minutes * 60);
-            if (minutes == 0){
-                finalTime += "00";
-            } else if (minutes < 10 && minutes > 0){
-                finalTime += "0";
-                finalTime += Integer.toString(minutes);
-            } else{
-                finalTime+= Integer.toString(minutes);
-            }
-            int seconds = totalSeconds;
-            if (seconds == 0){
-                finalTime += "00";
-            } else if (seconds < 10 && seconds > 0){
-                finalTime += "0";
-                finalTime += Integer.toString(seconds);
-            } else{
-                finalTime += Integer.toString(seconds);
-            }
-            int tempInt = Integer.parseInt(finalTime);
-            finalTime = Integer.toString(tempInt);
-            time = finalTime;
-            finalTime = "";
-            if (time.length() % 2 == 0) {
-                for (int j = 0; j < time.length(); j++) {
-                    finalTime += time.charAt(j);
-                    if (j % 2 == 1 && j > 0 && (j != time.length() - 1)) {
-                        finalTime += ':';
-                    }
-                }
-            } else {
-                for (int j = 0; j < time.length(); j++) {
-                    finalTime += time.charAt(j);
-                    if (j % 2 == 0 && (j != time.length() - 1)) {
-                        finalTime += ':';
-                    }
-                }
-            }
-            timeRight.setText(finalTime);
-            if (simpleBoolean.equals("False")) {
-                TextView distanceRight = (TextView) findViewById(R.id.distanceRight);
-                distance = dbHelper.getData("SELECT distance FROM TimedTable4 WHERE ID = '" + id + "'");
-                distanceRight.setText(distance);
-            }
+
+            TextView timeRight = findViewById(R.id.timeRight);
+            int time = activityData.time;
+            String formattedTime = formatSecondsIntoDate(time);
+
+            timeRight.setText(formattedTime);
         }
         getSupportActionBar().setTitle("Workout Detail");
+    }
+
+    private String formatSecondsIntoDate(int seconds){
+        int hours = seconds / 3600;
+        int minutes = (seconds / 60) % 60;
+        seconds = seconds % 60;
+
+        String hourString = (hours < 10)? "0" + Integer.toString(hours) : Integer.toString(hours);
+        String minutesString = (minutes < 10)? "0" + Integer.toString(minutes) : Integer.toString(minutes);
+        String secondsString = (seconds < 10)? "0" + Integer.toString(seconds) : Integer.toString(seconds);
+
+        String res = hourString + ":" + minutesString + ":" + secondsString;
+        return res;
     }
 
     @Override
@@ -154,10 +114,10 @@ public class EventDetailActivity extends AppCompatActivity {
     }
 
     public void deleteWorkout(MenuItem item) {
-        if (weightedOrTimed.equals("Weighted")){
-            dbHelper.deleteEvent("Weight", id);
+        if (measurement == 1 || measurement == 2){
+            dbHelper.deleteEvent("Weight", activityId);
         } else{
-            dbHelper.deleteEvent("Time", id);
+            dbHelper.deleteEvent("Time", activityId);
         }
         finish();
     }

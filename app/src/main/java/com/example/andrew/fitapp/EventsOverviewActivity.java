@@ -26,14 +26,10 @@ import android.widget.Toast;
 public class EventsOverviewActivity extends AppCompatActivity  implements AdapterView.OnItemSelectedListener {
     DatabaseHelper dbHelper = new DatabaseHelper(this);
     private static final String TAG = "NewEntry";
-    private static String workoutType;
-    private SectionsPageAdapter mSectionsPageAdapter;
     private ViewPager mViewPager;
     private FragmentListener fragmentListener1;
     private FragmentListener fragmentListener2;
-    private static String weightedOrTimed;
-    private static String simpleBoolean;
-    private static String type;
+    private static WorkoutData workoutData;
     private boolean created = false;
     Spinner spinner;
 
@@ -48,34 +44,30 @@ public class EventsOverviewActivity extends AppCompatActivity  implements Adapte
         getSupportActionBar().setTitle(output);
 
         //Determine what kind of spinner is needed based on the measurement type
-        weightedOrTimed = dbHelper.getData("SELECT Measurement FROM NameTable4 WHERE Name = '" + name + "'");
-        simpleBoolean = dbHelper.getData("SELECT Simple FROM NameTable4 WHERE Name = '" + name + "'");
+        String query = "SELECT Measurement FROM " + DatabaseHelper.WORKOUT_TABLE_TITLE + " WHERE Name = '" + name + "'";
+        workoutData = dbHelper.getWorkoutData(query);
+
         ArrayAdapter<CharSequence> adapter = null;
         spinner = findViewById(R.id.spinner);
-        if (weightedOrTimed.equals("Weighted")) {
-            if (simpleBoolean.equals("False")) {
-                adapter = ArrayAdapter.createFromResource(this, R.array.WeightedMeasurements, android.R.layout.simple_spinner_item);
-                type = "Weighted";
-            } else{
-                adapter = ArrayAdapter.createFromResource(this, R.array.SimpleWeightedMeasurements, android.R.layout.simple_spinner_item);
-                type = "WeightedSimple";
-            }
-        } else{
-            if (simpleBoolean.equals("False")){
-                adapter = ArrayAdapter.createFromResource(this, R.array.TimeMeasurements, android.R.layout.simple_spinner_item);
-                type = "Timed";
-            } else if (simpleBoolean.equals("True")){
-                adapter = ArrayAdapter.createFromResource(this, R.array.SimpleTimeMeasurements, android.R.layout.simple_spinner_item);
-                type = "TimedSimple";
-            }
+
+        int measurement = workoutData.measurement;
+
+        if (measurement == 3) {
+            adapter = ArrayAdapter.createFromResource(this, R.array.WeightedMeasurements, android.R.layout.simple_spinner_item);
+        } else if (measurement == 4){
+            adapter = ArrayAdapter.createFromResource(this, R.array.SimpleWeightedMeasurements, android.R.layout.simple_spinner_item);
+        } else if (measurement == 1) {
+            adapter = ArrayAdapter.createFromResource(this, R.array.TimeMeasurements, android.R.layout.simple_spinner_item);
+        } else {
+            adapter = ArrayAdapter.createFromResource(this, R.array.SimpleTimeMeasurements, android.R.layout.simple_spinner_item);
         }
+
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
-        mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = findViewById(R.id.container);
         setupViewPager(mViewPager);
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
     }
 
@@ -94,11 +86,7 @@ public class EventsOverviewActivity extends AppCompatActivity  implements Adapte
 
     public void deleteWorkout(MenuItem item) {
         String name = getIntent().getStringExtra("workoutName");
-        if (weightedOrTimed.equals("Weighted")){
-            dbHelper.deleteActivity("Weight", name);
-        } else{
-            dbHelper.deleteActivity( "Time", name);
-        }
+        dbHelper.deleteActivity("Weight", name); //TODO: Fix this
         finish();
     }
 
@@ -113,7 +101,7 @@ public class EventsOverviewActivity extends AppCompatActivity  implements Adapte
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
         String text = parent.getItemAtPosition(position).toString();
-        sendDataToFragment(type, text);
+        sendDataToFragment(text);
     }
 
     @Override
@@ -122,7 +110,7 @@ public class EventsOverviewActivity extends AppCompatActivity  implements Adapte
     }
 
     public interface FragmentListener {
-        void updateFragmentList(String type, String measurement);
+        void updateFragmentList(String measurement);
     }
 
     public void setFragmentListener1(FragmentListener listener){
@@ -133,9 +121,9 @@ public class EventsOverviewActivity extends AppCompatActivity  implements Adapte
         this.fragmentListener2 = listener;
     }
 
-    public void sendDataToFragment(String type, String measurement){
-        this.fragmentListener1.updateFragmentList(type, measurement);
-        this.fragmentListener2.updateFragmentList(type, measurement);
+    public void sendDataToFragment(String measurement){
+        this.fragmentListener1.updateFragmentList(measurement);
+        this.fragmentListener2.updateFragmentList(measurement);
     }
 
     @Override
@@ -146,7 +134,7 @@ public class EventsOverviewActivity extends AppCompatActivity  implements Adapte
             if (resultCode == Activity.RESULT_OK) {
                 // get String data from Intent
                 String text = spinner.getSelectedItem().toString();
-                sendDataToFragment(type, text);
+                sendDataToFragment(text);
             }
         }
     }

@@ -1,17 +1,20 @@
 package com.example.andrew.fitapp;
 
+import java.util.Comparator;
 import java.util.Date;
 
-public class ActivityData {
+public class ActivityData{
+    public Integer id;
     public String name;
-    public Date date;
-    public String time;
+    public String date; //MM/dd/yyyy
+    public Integer time;
     public String distance;
     public String weight;
     public String reps;
     public String sets;
 
-    public ActivityData(String nameInput, Date dateInput, String timeInput, String distanceInput, String weightInput, String repsInput, String setsInput){
+    public ActivityData(Integer idInput, String nameInput, String dateInput, Integer timeInput, String distanceInput, String weightInput, String repsInput, String setsInput){
+        id = idInput;
         name = nameInput;
         date = dateInput;
         time = timeInput;
@@ -20,5 +23,4 @@ public class ActivityData {
         reps = repsInput;
         sets = setsInput;
     }
-
 }

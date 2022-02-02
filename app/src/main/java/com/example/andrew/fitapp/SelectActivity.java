@@ -64,13 +64,10 @@ public class SelectActivity extends AppCompatActivity {
     }
 
     private void initData() {
-        String data;
+        List<WorkoutData> workoutData = dbHelper.getWorkoutsByType(workoutType);
 
-        String query = "SELECT NAME FROM " + DatabaseHelper.WORKOUT_TABLE_TITLE + " WHERE Type = '" + workoutType + "'";
-        data = dbHelper.getData(query);
-        String [] arrOfStr = data.split(",");
-        for (int i = 0; i < arrOfStr.length; i++){
-            workoutTypeList.add(arrOfStr[i]);
+        for (int i = 0; i < workoutData.size(); i++){
+            workoutTypeList.add(workoutData.get(i).name);
         }
     }
 

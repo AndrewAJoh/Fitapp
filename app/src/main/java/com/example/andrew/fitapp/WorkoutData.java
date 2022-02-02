@@ -12,4 +12,8 @@ public class WorkoutData {
         type = typeInput;
         measurement = measurementInput;
     }
+
+    public WorkoutData(){
+
+    }
 }

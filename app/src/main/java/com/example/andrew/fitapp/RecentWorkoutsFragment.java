@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.example.andrew.fitapp.ComplexAdapter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,445 +24,170 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
     private static final String TAG = "RecentWorkouts";
     private List<DataSet> recentList;
     private ComplexAdapter adapter;
-    private static String weightedOrTimed;
-    private static String simpleBoolean;
-    private static String name;
+    private static int workoutMeasurement;
+    private static String workoutName;
     View view;
     DatabaseHelper dbHelper;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
-        view = inflater.inflate(R.layout.recent_workout_tab, container, false);
         Log.d(TAG, "OnCreateView: Started");
-        name = getActivity().getIntent().getStringExtra("workoutName");
-        name = name.toLowerCase();
+        view = inflater.inflate(R.layout.recent_workout_tab, container, false);
         dbHelper = new DatabaseHelper(getContext());
-        weightedOrTimed = dbHelper.getData("SELECT Measurement FROM NameTable4 WHERE Name = '" + name + "'");
-        simpleBoolean = dbHelper.getData("SELECT Simple FROM NameTable4 WHERE Name = '" + name + "'");
-        //INITIAL TAB
-        if (weightedOrTimed.equals("Weighted")) {
-            if (simpleBoolean.equals("False")) {
-                initData("Weighted", null);
-            } else{
-                initData("WeightedSimple", null);
-            }
-        } else{
-            if (simpleBoolean.equals("False")){
-                initData("Timed", "Distance");
-            } else if (simpleBoolean.equals("True")){
-                initData("TimedSimple", null);
-            }
+
+        workoutName = getActivity().getIntent().getStringExtra("workoutName").toLowerCase();
+
+        workoutName = getActivity().getIntent().getStringExtra("workoutName").toLowerCase();
+
+        String query = "SELECT Measurement FROM " + DatabaseHelper.ACTIVITY_TABLE_TITLE + " WHERE Name = '" + workoutName + "'";
+        WorkoutData workoutData = dbHelper.getWorkoutData(query);
+        workoutMeasurement = workoutData.measurement;
+
+        if (workoutMeasurement == 1){
+            initData(null);
+        } else if (workoutMeasurement == 2){
+            initData(null);
+        } else if (workoutMeasurement == 3) {
+            initData("Distance");
+        } else {
+            initData(null);
         }
+
         initRecyclerView();
         ((EventsOverviewActivity) getActivity()).setFragmentListener1(this);
         return view;
     }
 
-    private void initData(String type, String measurement) {
-        String date;
-        String newDate = "";
-        int k = 1;
-        recentList = new ArrayList<DataSet>();
+    private String formatSecondsIntoDate(int seconds){
+        int hours = seconds / 3600;
+        int minutes = (seconds / 60) % 60;
+        seconds = seconds % 60;
+
+        String hourString = (hours < 10)? "0" + Integer.toString(hours) : Integer.toString(hours);
+        String minutesString = (minutes < 10)? "0" + Integer.toString(minutes) : Integer.toString(minutes);
+        String secondsString = (seconds < 10)? "0" + Integer.toString(seconds) : Integer.toString(seconds);
+
+        String res = hourString + ":" + minutesString + ":" + secondsString;
+        return res;
+    }
+
+    private void initData(String measurement) {
+        List<DataSet> topList = new ArrayList<>();
         DatabaseHelper dbHelper = new DatabaseHelper(view.getContext());
-        String data;
-        String [] arrOfStr;
-        if (type.equals("TimedSimple")) {
-            data = dbHelper.getData("SELECT Time, Date, ID FROM TimedTable4 WHERE Name = '" + name + "' ORDER BY ID DESC");
-            arrOfStr = data.split(",");
-            String newString;
-            String resultString;
-            if (!arrOfStr[0].equals("")) {
-                recentList = new ArrayList<DataSet>();
-                for (int i = 0; i < arrOfStr.length; i += 3) {
-                    newString = arrOfStr[i];
-                    resultString = "";
-                    int totalSeconds = Integer.parseInt(newString);
-                    int hours = totalSeconds/3600;
-                    if (hours == 0){
-                        resultString += "00";
-                    } else if (hours < 10 && hours > 0){
-                        resultString += "0";
-                        resultString += Integer.toString(hours);
-                    } else{
-                        resultString+= Integer.toString(hours);
-                    }
-                    totalSeconds = totalSeconds - (hours * 3600);
-                    int minutes = totalSeconds/60;
-                    totalSeconds = totalSeconds - (minutes * 60);
-                    if (minutes == 0){
-                        resultString += "00";
-                    } else if (minutes < 10 && minutes > 0){
-                        resultString += "0";
-                        resultString += Integer.toString(minutes);
-                    } else{
-                        resultString+= Integer.toString(minutes);
-                    }
-                    int seconds = totalSeconds;
-                    if (seconds == 0){
-                        resultString += "00";
-                    } else if (seconds < 10 && seconds > 0){
-                        resultString += "0";
-                        resultString += Integer.toString(seconds);
-                    } else{
-                        resultString += Integer.toString(seconds);
-                    }
-                    int tempInt = Integer.parseInt(resultString);
-                    resultString = Integer.toString(tempInt);
-                    newString = resultString;
-                    resultString = "";
-                    if (newString.length() % 2 == 0) {
-                        for (int j = 0; j < newString.length(); j++) {
-                            resultString += newString.charAt(j);
-                            if (j % 2 == 1 && j > 0 && (j != newString.length() - 1)) {
-                                resultString += ':';
-                            }
-                        }
-                    } else {
-                        for (int j = 0; j < newString.length(); j++) {
-                            resultString += newString.charAt(j);
-                            if (j % 2 == 0 && (j != newString.length() - 1)) {
-                                resultString += ':';
-                            }
-                        }
-                    }
-                    date = arrOfStr[i + 1];
-                    newDate = "";
-                    if (date.charAt(5) == '0') {
-                        newDate += date.charAt(6);
-                    } else {
-                        newDate += date.charAt(5);
-                        newDate += date.charAt(6);
-                    }
-                    newDate += "/";
-                    if (date.charAt(8) == '0') {
-                        newDate += date.charAt(9);
-                    } else {
-                        newDate += date.charAt(8);
-                        newDate += date.charAt(9);
-                    }
-                    newDate += "/";
-                    newDate += date.charAt(2);
-                    newDate += date.charAt(3);
-                    String id = arrOfStr[i + 2];
-                    DataSet dataset = new DataSet(Integer.toString(k), resultString, newDate, id);
-                    k++;
+        List<ActivityData> data = dbHelper.getActivityDataByName(workoutName);
+
+        if (workoutMeasurement == 4) { //Timed simple
+            if (!data.isEmpty()) {
+                for (int i = 0; i < data.size(); i++) { //Loop through records
+                    String time = formatSecondsIntoDate(data.get(i).time);
+                    String date = data.get(i).date;
+                    String id = String.valueOf(data.get(i).id);
+
+                    DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
                     System.out.println("added " + dataset.getRawData() + " to the list");
-                    recentList.add(dataset);
+                    topList.add(dataset);
                 }
             } else {
                 DataSet noItems = new DataSet("", "No data available", "", "");
-                recentList.add(noItems);
+                topList.add(noItems);
             }
-        } else if (type.equals("Timed")) {
+        } else if (workoutMeasurement == 3) {
             if (measurement.equals("Distance")){
-                data = dbHelper.getData("SELECT Distance, Date, ID FROM TimedTable4 WHERE Name = '" + name + "' ORDER BY ID DESC");
-                arrOfStr = data.split(",");
-                if (!arrOfStr[0].equals("")){
-                    recentList = new ArrayList<DataSet>();
-                    for (int i = 0; i < arrOfStr.length; i+=3){
-                        System.out.println(arrOfStr[i]);
-                        date = arrOfStr[i + 1];
-                        newDate = "";
-                        if (date.charAt(5) == '0') {
-                            newDate += date.charAt(6);
-                        } else {
-                            newDate += date.charAt(5);
-                            newDate += date.charAt(6);
-                        }
-                        newDate += "/";
-                        if (date.charAt(8) == '0') {
-                            newDate += date.charAt(9);
-                        } else {
-                            newDate += date.charAt(8);
-                            newDate += date.charAt(9);
-                        }
-                        newDate += "/";
-                        newDate += date.charAt(2);
-                        newDate += date.charAt(3);
-                        String id = arrOfStr[i + 2];
-                        DataSet dataset = new DataSet(Integer.toString(k), arrOfStr[i], newDate, id);
-                        k++;
-                        recentList.add(dataset);
-                    }
-                } else{
-                    DataSet noItems = new DataSet("", "No data available", "", "");
-                    recentList.add(noItems);
-                }
+                Collections.sort(data, (object1, object2) -> object1.distance.compareTo(object2.distance));
+                if (!data.isEmpty()) {
+                    for (int i = 0; i < data.size(); i++) { //Loop through records
+                        String time = formatSecondsIntoDate(data.get(i).time);
+                        String date = data.get(i).date;
+                        String id = String.valueOf(data.get(i).id);
 
-            } else if (measurement.equals("Time")){
-                data = dbHelper.getData("SELECT Time, Date, ID FROM TimedTable4 WHERE Name = '" + name + "' ORDER BY ID DESC");
-                arrOfStr = data.split(",");
-                String newString;
-                String resultString;
-                if (!arrOfStr[0].equals("")) {
-                    recentList = new ArrayList<DataSet>();
-                    for (int i = 0; i < arrOfStr.length; i += 3) {
-                        newString = arrOfStr[i];
-                        resultString = "";
-                        //Format into nice time format
-                        int totalSeconds = Integer.parseInt(newString);
-                        int hours = totalSeconds/3600;
-                        if (hours == 0){
-                            resultString += "00";
-                        } else if (hours < 10 && hours > 0){
-                            resultString += "0";
-                            resultString += Integer.toString(hours);
-                        } else{
-                            resultString+= Integer.toString(hours);
-                        }
-                        totalSeconds = totalSeconds - (hours * 3600);
-                        int minutes = totalSeconds/60;
-                        totalSeconds = totalSeconds - (minutes * 60);
-                        if (minutes == 0){
-                            resultString += "00";
-                        } else if (minutes < 10 && minutes > 0){
-                            resultString += "0";
-                            resultString += Integer.toString(minutes);
-                        } else{
-                            resultString+= Integer.toString(minutes);
-                        }
-                        int seconds = totalSeconds;
-                        if (seconds == 0){
-                            resultString += "00";
-                        } else if (seconds < 10 && seconds > 0){
-                            resultString += "0";
-                            resultString += Integer.toString(seconds);
-                        } else{
-                            resultString += Integer.toString(seconds);
-                        }
-                        int tempInt = Integer.parseInt(resultString);
-                        resultString = Integer.toString(tempInt);
-                        newString = resultString;
-                        resultString = "";
-                        if (newString.length() % 2 == 0) {
-                            for (int j = 0; j < newString.length(); j++) {
-                                resultString += newString.charAt(j);
-                                if (j % 2 == 1 && j > 0 && (j != newString.length() - 1)) {
-                                    resultString += ':';
-                                }
-                            }
-                        } else {
-                            for (int j = 0; j < newString.length(); j++) {
-                                resultString += newString.charAt(j);
-                                if (j % 2 == 0 && (j != newString.length() - 1)) {
-                                    resultString += ':';
-                                }
-                            }
-                        }
-                        date = arrOfStr[i + 1];
-                        newDate = "";
-                        if (date.charAt(5) == '0') {
-                            newDate += date.charAt(6);
-                        } else {
-                            newDate += date.charAt(5);
-                            newDate += date.charAt(6);
-                        }
-                        newDate += "/";
-                        if (date.charAt(8) == '0') {
-                            newDate += date.charAt(9);
-                        } else {
-                            newDate += date.charAt(8);
-                            newDate += date.charAt(9);
-                        }
-                        newDate += "/";
-                        newDate += date.charAt(2);
-                        newDate += date.charAt(3);
-                        String id = arrOfStr[i+2];
-                        DataSet dataset = new DataSet(Integer.toString(k), resultString, newDate, id);
-                        k++;
+                        DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
                         System.out.println("added " + dataset.getRawData() + " to the list");
-                        recentList.add(dataset);
+                        topList.add(dataset);
                     }
                 } else {
                     DataSet noItems = new DataSet("", "No data available", "", "");
-                    recentList.add(noItems);
+                    topList.add(noItems);
+                }
+            } else if (measurement.equals("Time")){
+                Collections.sort(data, (object1, object2) -> object1.time.compareTo(object2.time));
+
+                if (!data.isEmpty()) {
+                    for (int i = 0; i < data.size(); i++) { //Loop through records
+                        String time = formatSecondsIntoDate(data.get(i).time);
+                        String date = data.get(i).date;
+                        String id = String.valueOf(data.get(i).id);
+
+                        DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
+                        System.out.println("added " + dataset.getRawData() + " to the list");
+                        topList.add(dataset);
+                    }
+                } else {
+                    DataSet noItems = new DataSet("", "No data available", "", "");
+                    topList.add(noItems);
                 }
             } else if (measurement.equals("Pace")){
-                data = dbHelper.getData("SELECT Time, Distance, Date, ID FROM TimedTable4 WHERE Name = '" + name + "' ORDER BY ID DESC");
-                arrOfStr = data.split(",");
-                String newString;
-                String resultString = "";
-                double distanceDouble;
-                String distanceString = "";
-                int seconds = 0;
-                double paceDouble;
-                int paceInt;
-                String paceString;
-                int perMile;
-                String id = "";
-                String additionalSeconds;
-                String perMileString = "";
-                if (!arrOfStr[0].equals("")) {
-                    recentList = new ArrayList<DataSet>();
-                    for (int i = 0; i < arrOfStr.length; i += 1) {
-                        newString = arrOfStr[i];
-                        if (i % 4 == 0) {
-                            resultString = "";
-                            seconds = Integer.parseInt(newString);
-                        }
-                        if (i % 4 == 1){
-                            distanceString = arrOfStr[i];
-                            distanceDouble = Double.parseDouble(distanceString);
-                            paceDouble = seconds/distanceDouble;
-                            paceString = Double.toString(paceDouble);
-                            String[] paceSplit = paceString.split("\\.");
-                            paceString = paceSplit[0];
-                            paceInt = Integer.parseInt(paceString);
-                            perMile = paceInt/60;
-                            perMileString = Integer.toString(perMile);
-                            perMileString += ":";
-                            additionalSeconds = Integer.toString(paceInt % 60);
-                            if (additionalSeconds.equals("0")){
-                                perMileString += "00";
-                            } else if (additionalSeconds.length() == 1){
-                                perMileString += "0";
-                                perMileString += additionalSeconds;
-                            } else{
-                                perMileString += additionalSeconds;
-                            }
-                            perMileString += " for " + distanceString + " mi";
-                        }
-                        if (i % 4 == 2) {
-                            date = arrOfStr[i];
-                            newDate = "";
-                            if (date.charAt(5) == '0') {
-                                newDate += date.charAt(6);
-                            } else {
-                                newDate += date.charAt(5);
-                                newDate += date.charAt(6);
-                            }
-                            newDate += "/";
-                            if (date.charAt(8) == '0') {
-                                newDate += date.charAt(9);
-                            } else {
-                                newDate += date.charAt(8);
-                                newDate += date.charAt(9);
-                            }
-                            newDate += "/";
-                            newDate += date.charAt(2);
-                            newDate += date.charAt(3);
+                //data = dbHelper.getData("SELECT Time, Distance, Date, (Distance/Time) AS Pace, ID FROM TimedTable4 WHERE Name = '" + name + "' ORDER BY PACE DESC");
+                Collections.sort(data, (object1, object2) -> object1.time.compareTo(object2.time)); //TODO: Fix this
 
-                        }
-                        if (i % 4 == 3){
-                            id = arrOfStr[i];
-                            DataSet dataset = new DataSet(Integer.toString(k), perMileString, newDate, id);
-                            k++;
-                            perMileString = "";
-                            System.out.println("added " + dataset.getRawData() + " to the list");
-                            recentList.add(dataset);
-                            seconds = 0;
-                        }
+                if (!data.isEmpty()) {
+                    for (int i = 0; i < data.size(); i++) { //Loop through records
+                        String time = formatSecondsIntoDate(data.get(i).time);
+                        String date = data.get(i).date;
+                        String id = String.valueOf(data.get(i).id);
+
+                        DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
+                        System.out.println("added " + dataset.getRawData() + " to the list");
+                        topList.add(dataset);
                     }
                 } else {
-                    DataSet noItems = new DataSet("", "No data available", "", id);
-                    recentList.add(noItems);
+                    DataSet noItems = new DataSet("", "No data available", "", "");
+                    topList.add(noItems);
                 }
             }
-        } else if (type.equals("Weighted")){
-            data = dbHelper.getData("SELECT Weight, Sets, Reps, Date, ID FROM WeightedTable2 WHERE Name = '" + name + "' ORDER BY ID DESC");
-            arrOfStr = data.split(",");
-            String newString = "";
-            String id = "";
-            if (!arrOfStr[0].equals("")) {
-                recentList = new ArrayList<DataSet>();
-                for (int i = 0; i < arrOfStr.length; i += 1) {
-                    if (i % 5 == 3){
-                        date = arrOfStr[i];
-                        newDate = "";
-                        if (date.charAt(5) == '0') {
-                            newDate += date.charAt(6);
-                        } else {
-                            newDate += date.charAt(5);
-                            newDate += date.charAt(6);
-                        }
-                        newDate += "/";
-                        if (date.charAt(8) == '0') {
-                            newDate += date.charAt(9);
-                        } else {
-                            newDate += date.charAt(8);
-                            newDate += date.charAt(9);
-                        }
-                        newDate += "/";
-                        newDate += date.charAt(2);
-                        newDate += date.charAt(3);
-                    } else {
-                        if (i % 5 == 0){
-                            newString+= arrOfStr[i];
-                            newString+= "  ";
-                        } else if (i % 5 == 1){
-                            newString+= arrOfStr[i];
-                            newString+= " x ";
-                        } else if (i % 5 == 2){
-                            newString+= arrOfStr[i];
-                        } else if (i % 5 == 4){
-                            id = arrOfStr[i];
-                            DataSet dataset = new DataSet(Integer.toString(k), newString, newDate, id);
-                            System.out.println("added " + dataset.getRawData() + " to the list");
-                            recentList.add(dataset);
-                            newString = "";
-                            k++;
-                        }
-                    }
-                }
-            } else {
-                DataSet noItems = new DataSet("", "No data available", "", id);
-                recentList.add(noItems);
-            }
-        } else if (type.equals("WeightedSimple")){
-            data = dbHelper.getData("SELECT Sets, Reps, Date, ID FROM WeightedTable2 WHERE Name = '" + name + "' ORDER BY ID DESC");
-            arrOfStr = data.split(",");
-            String newString = "";
-            String id = "";
-            if (!arrOfStr[0].equals("")) {
-                recentList = new ArrayList<DataSet>();
-                for (int i = 0; i < arrOfStr.length; i += 1) {
-                    if (i % 4 == 2){
-                        date = arrOfStr[i];
-                        System.out.println("DATE IS: "+date);
-                        newDate = "";
-                        if (date.charAt(5) == '0') {
-                            newDate += date.charAt(6);
-                        } else {
-                            newDate += date.charAt(5);
-                            newDate += date.charAt(6);
-                        }
-                        newDate += "/";
-                        if (date.charAt(8) == '0') {
-                            newDate += date.charAt(9);
-                        } else {
-                            newDate += date.charAt(8);
-                            newDate += date.charAt(9);
-                        }
-                        newDate += "/";
-                        newDate += date.charAt(2);
-                        newDate += date.charAt(3);
+        } else if (workoutMeasurement == 1){
+            //data = dbHelper.getData("SELECT Weight, Sets, Reps, Date, ID, (Weight * Sets * Reps) AS Total FROM WeightedTable2 WHERE Name = '" + name + "' ORDER BY Total DESC");
 
-                    } else {
-                        if (i % 4 == 0){
-                            newString+= arrOfStr[i];
-                            newString+= " x ";
-                        } else if (i % 4 == 1){
-                            newString+= arrOfStr[i];
-                        } else if (i % 4 == 3){
-                            id = arrOfStr[i];
-                            DataSet dataset = new DataSet(Integer.toString(k), newString, newDate, id);
-                            System.out.println("added " + dataset.getRawData() + " to the list");
-                            recentList.add(dataset);
-                            newString = "";
-                            k++;
-                        }
-                    }
+            Collections.sort(data, (object1, object2) -> object1.weight.compareTo(object2.weight)); //TODO: Fix this
+
+            if (!data.isEmpty()) {
+                for (int i = 0; i < data.size(); i++) { //Loop through records
+                    String time = formatSecondsIntoDate(data.get(i).time);
+                    String date = data.get(i).date;
+                    String id = String.valueOf(data.get(i).id);
+
+                    DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
+                    System.out.println("added " + dataset.getRawData() + " to the list");
+                    topList.add(dataset);
                 }
             } else {
-                DataSet noItems = new DataSet("", "No data available", "", id);
-                recentList.add(noItems);
+                DataSet noItems = new DataSet("", "No data available", "", "");
+                topList.add(noItems);
+            }
+        } else if (workoutMeasurement == 2){
+            //data = dbHelper.getData("SELECT Sets, Reps, Date, ID, (Reps * Sets) AS Total FROM WeightedTable2 WHERE Name = '" + name + "' ORDER BY Total DESC");
+
+            Collections.sort(data, (object1, object2) -> object1.sets.compareTo(object2.sets)); //TODO: Fix this
+
+            if (!data.isEmpty()) {
+                for (int i = 0; i < data.size(); i++) { //Loop through records
+                    String time = formatSecondsIntoDate(data.get(i).time);
+                    String date = data.get(i).date;
+                    String id = String.valueOf(data.get(i).id);
+
+                    DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
+                    System.out.println("added " + dataset.getRawData() + " to the list");
+                    topList.add(dataset);
+                }
+            } else {
+                DataSet noItems = new DataSet("", "No data available", "", "");
+                topList.add(noItems);
             }
         }
     }
 
-    public void updateFragmentList(String type, String measurement){
-        initData(type, measurement);
+    public void updateFragmentList(String measurement){
+        initData(measurement);
         initRecyclerView();
     }
 

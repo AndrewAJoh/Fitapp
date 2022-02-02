@@ -28,7 +28,8 @@ public class AddEventActivity extends AppCompatActivity {
         Log.d(TAG, "OnCreate: started");
         super.onCreate(savedInstanceState);
         workoutName = getIntent().getStringExtra("workoutName");
-        workoutMeasurement = Integer.parseInt(dbHelper.getData("SELECT Measurement FROM WORKOUTS WHERE Name = '" + workoutName + "'"));
+        WorkoutData workoutData = dbHelper.getWorkoutData("SELECT Measurement FROM WORKOUTS WHERE Name = '" + workoutName + "'");
+        workoutMeasurement = workoutData.measurement;
         getSupportActionBar().setTitle(workoutName);
         if (workoutMeasurement == 1) { //Reps and Weight
             setContentView(R.layout.activity_add_event_weighted);
@@ -117,11 +118,10 @@ public class AddEventActivity extends AppCompatActivity {
             String weightString = weightText.getText().toString();
 
 
-            Date cDate = new Date();
-            //String fDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate); TODO: fix dates
-            //TODO: Add acceptable check
+            Date currentDate = new Date();
+            String formattedDate = new SimpleDateFormat("MM/dd/yyyy").format(currentDate);
 
-            newActivity = new ActivityData(newActivityName, null, null, null, weightString, repsString, setsString);
+            newActivity = new ActivityData(null, newActivityName, formattedDate, null, null, weightString, repsString, setsString);
 
 
         } else if (workoutMeasurement == 2){
@@ -132,10 +132,10 @@ public class AddEventActivity extends AppCompatActivity {
             String setsString = setsText.getText().toString();
             String repsString = repsText.getText().toString();
 
-            Date cDate = new Date();
-            //String fDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
+            Date currentDate = new Date();
+            String formattedDate = new SimpleDateFormat("MM/dd/yyyy").format(currentDate);
 
-            newActivity = new ActivityData(newActivityName, null, null, null, null, repsString, setsString);
+            newActivity = new ActivityData(null, newActivityName, formattedDate, null, null, null, repsString, setsString);
 
         } else if (workoutMeasurement == 3){
             //Time and Distance Activity
@@ -166,17 +166,16 @@ public class AddEventActivity extends AppCompatActivity {
                 acceptable = false;
             }
 
-            int total = hours*3600;
-            total += (minutes * 60);
-            total += seconds;
+            int time = hours*3600;
+            time += (minutes * 60);
+            time += seconds;
 
-            String timeString = Integer.toString(total);
             String distanceString = distanceText.getText().toString();
 
-            Date cDate = new Date();
-            String fDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
+            Date currentDate = new Date();
+            String formattedDate = new SimpleDateFormat("MM/dd/yyyy").format(currentDate);
 
-            newActivity = new ActivityData(newActivityName, null, timeString, distanceString, null, null, null);
+            newActivity = new ActivityData(null, newActivityName, formattedDate, time, distanceString, null, null, null);
 
             if (!acceptable) {
                 Toast toast = Toast.makeText(getApplicationContext(),
@@ -208,16 +207,14 @@ public class AddEventActivity extends AppCompatActivity {
                 acceptable = false;
             }
 
-            int total = hours*3600;
-            total += (minutes * 60);
-            total += seconds;
+            int time = hours*3600;
+            time += (minutes * 60);
+            time += seconds;
 
-            String timeString = Integer.toString(total);
+            Date currentDate = new Date();
+            String formattedDate = new SimpleDateFormat("MM/dd/yyyy").format(currentDate);
 
-            Date cDate = new Date();
-            String fDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
-
-            newActivity = new ActivityData(newActivityName, null, timeString, null, null, null, null);
+            newActivity = new ActivityData(null, newActivityName, formattedDate, time, null, null, null, null);
 
             if (!acceptable){
                 Toast toast = Toast.makeText(getApplicationContext(),

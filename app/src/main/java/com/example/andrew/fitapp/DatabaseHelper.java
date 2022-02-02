@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Andrew on 7/19/2018.
  */
@@ -87,8 +90,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "CREATE TABLE IF NOT EXISTS " + ACTIVITY_TABLE_TITLE + " (" +
             ACTIVITY_TABLE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             ACTIVITY_TABLE_NAME         + " TEXT, " +
-            ACTIVITY_TABLE_DATE         + " DATE, " +
-            ACTIVITY_TABLE_TIME         + " REAL, " +
+            ACTIVITY_TABLE_DATE         + " TEXT, " +
+            ACTIVITY_TABLE_TIME         + " INTEGER, " +
             ACTIVITY_TABLE_DISTANCE     + " REAL, " +
             ACTIVITY_TABLE_WEIGHT       + " TEXT, " +
             ACTIVITY_TABLE_REPS         + " INTEGER, " +
@@ -136,7 +139,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(ACTIVITY_TABLE_NAME, activity.name);
-        //contentValues.put(ACTIVITY_TABLE_DATE, activity.date);
+        contentValues.put(ACTIVITY_TABLE_DATE, activity.date);
         contentValues.put(ACTIVITY_TABLE_TIME, activity.time);
         contentValues.put(ACTIVITY_TABLE_DISTANCE, activity.distance);
         contentValues.put(ACTIVITY_TABLE_WEIGHT, activity.weight);
@@ -161,23 +164,139 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return statement.simpleQueryForLong();
     }
 
-    public String getData(String query) {
-        String row_values = "";
-        Log.d(TAG, "getData: Getting data from a table");
+    public ActivityData getActivityDataById(String id){
+        String logMessage = "getData: Getting data from " + ACTIVITY_TABLE_TITLE;
+        Log.d(TAG, logMessage);
         SQLiteDatabase db = this.getWritableDatabase();
+
+        String query = "SELECT ID, Name, Date, Time, Distance, Weight, Reps, Sets FROM " +
+                DatabaseHelper.ACTIVITY_TABLE_TITLE +
+                " WHERE ID = '" + id + "'";
+
         Cursor cur = db.rawQuery(query, null);
+
+        String debugString = cur.getInt(0) + ", " +
+            cur.getString(1) + ", " +
+            cur.getString(2) + ", " +
+            cur.getInt(3) + ", " +
+            cur.getString(4) + ", " +
+            cur.getString(5) + ", " +
+            cur.getString(6) + ", " +
+            cur.getString(7) + "\n";
+
+        ActivityData ad = new ActivityData(
+                cur.getInt(0),
+                cur.getString(1),
+                cur.getString(2),
+                cur.getInt(3),
+                cur.getString(4),
+                cur.getString(5),
+                cur.getString(6),
+                cur.getString(7));
+
+        Log.d("QUERY RETURNED: ", debugString);
+
+        return ad;
+    }
+
+    public List<ActivityData> getActivityDataByName(String activityName) {
+        String logMessage = "getData: Getting data from " + ACTIVITY_TABLE_TITLE;
+        Log.d(TAG, logMessage);
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //TODO: Parse activityName for bad characters
+
+        String query = "SELECT ID, Name, Date, Time, Distance, Weight, Reps, Sets FROM " +
+                        DatabaseHelper.ACTIVITY_TABLE_TITLE +
+                        " WHERE Name = '" + activityName + "'";
+
+        List<ActivityData> res = new ArrayList<ActivityData>();
+        Cursor cur = db.rawQuery(query, null);
+        String debugString = "";
+
         if (cur.getCount() != 0) {
             cur.moveToFirst();
             do {
-                for (int i = 0; i < cur.getColumnCount(); i++) {
-                    row_values = row_values + "," + cur.getString(i);
-                }
+                debugString += cur.getInt(0) + ", " +
+                    cur.getString(1) + ", " +
+                    cur.getString(2) + ", " +
+                    cur.getInt(3) + ", " +
+                    cur.getString(4) + ", " +
+                    cur.getString(5) + ", " +
+                    cur.getString(6) + ", " +
+                    cur.getString(7) + "\n";
 
+                ActivityData ad = new ActivityData(
+                    cur.getInt(0),
+                    cur.getString(1),
+                    cur.getString(2),
+                    cur.getInt(3),
+                    cur.getString(4),
+                    cur.getString(5),
+                    cur.getString(6),
+                    cur.getString(7));
+
+                res.add(ad);
             } while (cur.moveToNext());
-            row_values = row_values.substring(1);
-            Log.d("TABLE VALUES: ", row_values);
+            Log.d("QUERY RETURNED: ", debugString);
         }
-        return row_values;
+
+        return res;
+    }
+
+    public List<WorkoutData> getWorkoutsByType(String type){
+        String logMessage = "getData: Getting data from " + WORKOUT_TABLE_TITLE;
+        Log.d(TAG, logMessage);
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT Name, Type, Measurement FROM " + WORKOUT_TABLE_TITLE + " WHERE Type = '" + type + "'";
+        Cursor cur = db.rawQuery(query, null);
+
+        List<WorkoutData> workoutList = new ArrayList<WorkoutData>();
+
+        String debugString = "";
+
+        if (cur.getCount() != 0) {
+            cur.moveToFirst();
+            do {
+                debugString += cur.getString(0) + ", " +
+                        cur.getString(1) + ", " +
+                        cur.getInt(2) + "\n";
+
+                WorkoutData wd = new WorkoutData(
+                        cur.getString(0),
+                        cur.getString(1),
+                        cur.getInt(2));
+
+                workoutList.add(wd);
+            } while (cur.moveToNext());
+            Log.d("QUERY RETURNED: ", debugString);
+        }
+
+        return workoutList;
+    }
+
+    public WorkoutData getWorkoutData(String query){
+        String logMessage = "getData: Getting data from " + WORKOUT_TABLE_TITLE;
+        Log.d(TAG, logMessage);
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cur = db.rawQuery(query, null);
+        String debugString = "";
+        WorkoutData wd = new WorkoutData();
+
+        if (cur.getCount() != 0) {
+            cur.moveToFirst();
+            debugString += cur.getString(0) + ", " +
+                    cur.getString(1) + ", " +
+                    cur.getInt(2) + "\n";
+
+            wd.name = cur.getString(0);
+            wd.type = cur.getString(1);
+            wd.measurement = cur.getInt(2);
+
+            Log.d("QUERY RETURNED: ", debugString);
+        }
+
+        return wd;
     }
 
     public boolean deleteActivity(String weightOrTime, String ID){
