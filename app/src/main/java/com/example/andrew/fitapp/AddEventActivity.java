@@ -28,7 +28,7 @@ public class AddEventActivity extends AppCompatActivity {
         Log.d(TAG, "OnCreate: started");
         super.onCreate(savedInstanceState);
         workoutName = getIntent().getStringExtra("workoutName");
-        WorkoutData workoutData = dbHelper.getWorkoutData("SELECT Measurement FROM WORKOUTS WHERE Name = '" + workoutName + "'");
+        WorkoutData workoutData = dbHelper.getWorkoutDataByName(workoutName);
         workoutMeasurement = workoutData.measurement;
         getSupportActionBar().setTitle(workoutName);
         if (workoutMeasurement == 1) { //Reps and Weight

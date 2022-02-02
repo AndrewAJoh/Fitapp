@@ -275,9 +275,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return workoutList;
     }
 
-    public WorkoutData getWorkoutData(String query){
+    public WorkoutData getWorkoutDataByName(String workoutName){
         String logMessage = "getData: Getting data from " + WORKOUT_TABLE_TITLE;
         Log.d(TAG, logMessage);
+        String query = "SELECT Name, Type, Measurement FROM " + WORKOUT_TABLE_TITLE + " WHERE Name = '" + workoutName + "'";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cur = db.rawQuery(query, null);
         String debugString = "";

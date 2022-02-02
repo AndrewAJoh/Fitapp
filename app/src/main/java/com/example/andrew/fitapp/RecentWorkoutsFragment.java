@@ -1,6 +1,7 @@
 package com.example.andrew.fitapp;
 
 import android.os.Bundle;
+import android.service.autofill.Dataset;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -40,9 +41,10 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
 
         workoutName = getActivity().getIntent().getStringExtra("workoutName").toLowerCase();
 
-        String query = "SELECT Measurement FROM " + DatabaseHelper.ACTIVITY_TABLE_TITLE + " WHERE Name = '" + workoutName + "'";
-        WorkoutData workoutData = dbHelper.getWorkoutData(query);
+        WorkoutData workoutData = dbHelper.getWorkoutDataByName(workoutName);
         workoutMeasurement = workoutData.measurement;
+
+        recentList = new ArrayList<>();
 
         if (workoutMeasurement == 1){
             initData(null);
@@ -73,7 +75,6 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
     }
 
     private void initData(String measurement) {
-        List<DataSet> topList = new ArrayList<>();
         DatabaseHelper dbHelper = new DatabaseHelper(view.getContext());
         List<ActivityData> data = dbHelper.getActivityDataByName(workoutName);
 
@@ -86,14 +87,16 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
 
                     DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
                     System.out.println("added " + dataset.getRawData() + " to the list");
-                    topList.add(dataset);
+                    recentList.add(dataset);
                 }
             } else {
                 DataSet noItems = new DataSet("", "No data available", "", "");
-                topList.add(noItems);
+                recentList.add(noItems);
             }
         } else if (workoutMeasurement == 3) {
+
             if (measurement.equals("Distance")){
+
                 Collections.sort(data, (object1, object2) -> object1.distance.compareTo(object2.distance));
                 if (!data.isEmpty()) {
                     for (int i = 0; i < data.size(); i++) { //Loop through records
@@ -103,11 +106,12 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
 
                         DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
                         System.out.println("added " + dataset.getRawData() + " to the list");
-                        topList.add(dataset);
+                        recentList.add(dataset);
+
                     }
                 } else {
                     DataSet noItems = new DataSet("", "No data available", "", "");
-                    topList.add(noItems);
+                    recentList.add(noItems);
                 }
             } else if (measurement.equals("Time")){
                 Collections.sort(data, (object1, object2) -> object1.time.compareTo(object2.time));
@@ -120,11 +124,11 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
 
                         DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
                         System.out.println("added " + dataset.getRawData() + " to the list");
-                        topList.add(dataset);
+                        recentList.add(dataset);
                     }
                 } else {
                     DataSet noItems = new DataSet("", "No data available", "", "");
-                    topList.add(noItems);
+                    recentList.add(noItems);
                 }
             } else if (measurement.equals("Pace")){
                 //data = dbHelper.getData("SELECT Time, Distance, Date, (Distance/Time) AS Pace, ID FROM TimedTable4 WHERE Name = '" + name + "' ORDER BY PACE DESC");
@@ -138,11 +142,11 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
 
                         DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
                         System.out.println("added " + dataset.getRawData() + " to the list");
-                        topList.add(dataset);
+                        recentList.add(dataset);
                     }
                 } else {
                     DataSet noItems = new DataSet("", "No data available", "", "");
-                    topList.add(noItems);
+                    recentList.add(noItems);
                 }
             }
         } else if (workoutMeasurement == 1){
@@ -158,11 +162,11 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
 
                     DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
                     System.out.println("added " + dataset.getRawData() + " to the list");
-                    topList.add(dataset);
+                    recentList.add(dataset);
                 }
             } else {
                 DataSet noItems = new DataSet("", "No data available", "", "");
-                topList.add(noItems);
+                recentList.add(noItems);
             }
         } else if (workoutMeasurement == 2){
             //data = dbHelper.getData("SELECT Sets, Reps, Date, ID, (Reps * Sets) AS Total FROM WeightedTable2 WHERE Name = '" + name + "' ORDER BY Total DESC");
@@ -177,11 +181,11 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
 
                     DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
                     System.out.println("added " + dataset.getRawData() + " to the list");
-                    topList.add(dataset);
+                    recentList.add(dataset);
                 }
             } else {
                 DataSet noItems = new DataSet("", "No data available", "", "");
-                topList.add(noItems);
+                recentList.add(noItems);
             }
         }
     }
@@ -195,6 +199,7 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
         Log.d(TAG, "initRecyclerView: init recent workouts");
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view_recent);
         String name = getActivity().getIntent().getStringExtra("workoutName");
+
         adapter = new ComplexAdapter(getActivity(), recentList, name);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);

@@ -40,9 +40,10 @@ public class TopWorkoutsFragment extends Fragment implements EventsOverviewActiv
 
         workoutName = getActivity().getIntent().getStringExtra("workoutName").toLowerCase();
 
-        String query = "SELECT Measurement FROM " + DatabaseHelper.ACTIVITY_TABLE_TITLE + " WHERE Name = '" + workoutName + "'";
-        WorkoutData workoutData = dbHelper.getWorkoutData(query);
+        WorkoutData workoutData = dbHelper.getWorkoutDataByName(workoutName);
         workoutMeasurement = workoutData.measurement;
+
+        topList = new ArrayList<>();
 
         if (workoutMeasurement == 1){
             initData(null);
@@ -74,7 +75,6 @@ public class TopWorkoutsFragment extends Fragment implements EventsOverviewActiv
     }
 
     private void initData(String measurement) {
-        List<DataSet> topList = new ArrayList<>();
         DatabaseHelper dbHelper = new DatabaseHelper(view.getContext());
         List<ActivityData> data = dbHelper.getActivityDataByName(workoutName);
 

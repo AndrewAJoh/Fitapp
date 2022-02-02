@@ -44,8 +44,7 @@ public class EventsOverviewActivity extends AppCompatActivity  implements Adapte
         getSupportActionBar().setTitle(output);
 
         //Determine what kind of spinner is needed based on the measurement type
-        String query = "SELECT Measurement FROM " + DatabaseHelper.WORKOUT_TABLE_TITLE + " WHERE Name = '" + name + "'";
-        workoutData = dbHelper.getWorkoutData(query);
+        workoutData = dbHelper.getWorkoutDataByName(name);
 
         ArrayAdapter<CharSequence> adapter = null;
         spinner = findViewById(R.id.spinner);

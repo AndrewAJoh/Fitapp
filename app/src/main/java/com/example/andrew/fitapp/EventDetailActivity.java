@@ -32,7 +32,7 @@ public class EventDetailActivity extends AppCompatActivity {
         activityId = getIntent().getStringExtra("id");
 
         String query = "SELECT Measurement FROM " + DatabaseHelper.WORKOUT_TABLE_TITLE + " WHERE Name = '" + workoutName + "'";
-        WorkoutData workoutData = dbHelper.getWorkoutData(query);
+        WorkoutData workoutData = dbHelper.getWorkoutDataByName(workoutName);
         measurement = workoutData.measurement;
 
         TextView workoutNameDisplayRight = findViewById(R.id.workoutNameDisplayRight);

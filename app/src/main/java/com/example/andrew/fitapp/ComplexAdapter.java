@@ -28,15 +28,13 @@ import java.util.List;
 public class ComplexAdapter extends RecyclerView.Adapter<ComplexAdapter.SecondViewHolder> {
 
     private static final String TAG = "ComplexAdapter";
-    private List<DataSet> items = new ArrayList<DataSet>();
+    private List<DataSet> items;
     private static String name;
-    private static String weightedOrTimed;
-    private static String simpleBoolean;
-    DatabaseHelper dbHelper;
 
 
     public ComplexAdapter(Context context, List<DataSet> workoutNames, String workoutName){
         items = workoutNames;
+        String logName = "Complex adapter workoutNames size: " + String.valueOf(workoutNames.size());
         name = workoutName;
     }
     Context mContext;
