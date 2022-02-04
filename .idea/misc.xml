@@ -3,12 +3,25 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/AndyJ/AppData/Local/Android/Sdk/platforms/android-27/data/res/layout/simple_spinner_dropdown_item.xml" value="0.17907801418439717" />
+        <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/layout/activity_add_event.xml" value="0.36822916666666666" />
         <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/layout/activity_add_event_reps.xml" value="0.4317708333333333" />
         <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/layout/activity_add_event_timed_simple.xml" value="0.4317708333333333" />
         <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/layout/activity_add_event_weighted.xml" value="0.4317708333333333" />
+        <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/layout/activity_entry_detail_distance.xml" value="0.36822916666666666" />
+        <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/layout/activity_entry_detail_simple.xml" value="0.36822916666666666" />
+        <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/layout/activity_entry_detail_weights.xml" value="0.36822916666666666" />
         <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/layout/activity_main.xml" value="0.5541666666666667" />
         <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/layout/activity_new_entry.xml" value="0.3967391304347826" />
+        <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/layout/activity_workouts_screen.xml" value="0.36822916666666666" />
         <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/layout/add_activity.xml" value="0.4317708333333333" />
+        <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/layout/layout_eventholder.xml" value="0.36822916666666666" />
+        <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/layout/recent_workout_tab.xml" value="0.36822916666666666" />
+        <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/layout/top_workout_tab.xml" value="0.36822916666666666" />
+        <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/layout/workout_single_layout.xml" value="0.36822916666666666" />
+        <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/menu/add_workout.xml" value="0.36822916666666666" />
+        <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/menu/extras.xml" value="0.36822916666666666" />
+        <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/menu/menu_display_message.xml" value="0.36822916666666666" />
       </map>
     </option>
   </component>

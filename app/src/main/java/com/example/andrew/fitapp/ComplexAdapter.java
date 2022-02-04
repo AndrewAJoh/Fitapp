@@ -35,8 +35,10 @@ public class ComplexAdapter extends RecyclerView.Adapter<ComplexAdapter.SecondVi
     public ComplexAdapter(Context context, List<DataSet> workoutNames, String workoutName){
         items = workoutNames;
         String logName = "Complex adapter workoutNames size: " + String.valueOf(workoutNames.size());
+        Log.d(TAG, logName);
         name = workoutName;
     }
+
     Context mContext;
     @NonNull
     @Override

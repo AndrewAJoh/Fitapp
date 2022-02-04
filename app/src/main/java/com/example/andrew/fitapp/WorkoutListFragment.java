@@ -11,7 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,14 +25,17 @@ import java.util.List;
  * Created by Andrew on 8/14/2018.
  */
 
-public class TopWorkoutsFragment extends Fragment implements EventsOverviewActivity.FragmentListener{
-    private static final String TAG = "TopWorkouts";
+public class WorkoutListFragment extends Fragment implements EventsOverviewActivity.FragmentListener{
+    private static final String TAG = "WorkoutList";
     private List<DataSet> topList;
+    private ArrayAdapter<CharSequence> arrayAdapter;
     private ComplexAdapter adapter;
     private static int workoutMeasurement;
     private String workoutName;
+    private WorkoutData workoutData;
     View view;
     DatabaseHelper dbHelper;
+    Spinner spinner;
 
     @Nullable
     @Override
@@ -37,13 +43,47 @@ public class TopWorkoutsFragment extends Fragment implements EventsOverviewActiv
         Log.d(TAG, "OnCreateView: Started");
         view = inflater.inflate(R.layout.top_workout_tab, container, false);
         dbHelper = new DatabaseHelper(getContext());
+        spinner = view.findViewById(R.id.spinner);
+
+        //Determine what kind of spinner is needed based on the measurement type
+
+        workoutData = dbHelper.getWorkoutDataByName(workoutName);
+        int measurement = workoutData.measurement;
+
+        if (measurement == 3) {
+            arrayAdapter = ArrayAdapter.createFromResource(view.getContext(), R.array.WeightedMeasurements, android.R.layout.simple_spinner_item);
+        } else if (measurement == 4){
+            arrayAdapter = ArrayAdapter.createFromResource(view.getContext(), R.array.SimpleWeightedMeasurements, android.R.layout.simple_spinner_item);
+        } else if (measurement == 1) {
+            arrayAdapter = ArrayAdapter.createFromResource(view.getContext(), R.array.TimeMeasurements, android.R.layout.simple_spinner_item);
+        } else {
+            arrayAdapter = ArrayAdapter.createFromResource(view.getContext(), R.array.SimpleTimeMeasurements, android.R.layout.simple_spinner_item);
+        }
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner.setAdapter(arrayAdapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                       int arg2, long arg3) {
+                // text = parent.getItemAtPosition(position).toString();
+                //sendDataToFragment(text);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+
+            }
+        });
 
         workoutName = getActivity().getIntent().getStringExtra("workoutName").toLowerCase();
 
         WorkoutData workoutData = dbHelper.getWorkoutDataByName(workoutName);
         workoutMeasurement = workoutData.measurement;
-
-        topList = new ArrayList<>();
 
         if (workoutMeasurement == 1){
             initData(null);
@@ -75,6 +115,7 @@ public class TopWorkoutsFragment extends Fragment implements EventsOverviewActiv
     }
 
     private void initData(String measurement) {
+        topList = new ArrayList<>();
         DatabaseHelper dbHelper = new DatabaseHelper(view.getContext());
         List<ActivityData> data = dbHelper.getActivityDataByName(workoutName);
 

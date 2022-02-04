@@ -39,12 +39,8 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
 
         workoutName = getActivity().getIntent().getStringExtra("workoutName").toLowerCase();
 
-        workoutName = getActivity().getIntent().getStringExtra("workoutName").toLowerCase();
-
         WorkoutData workoutData = dbHelper.getWorkoutDataByName(workoutName);
         workoutMeasurement = workoutData.measurement;
-
-        recentList = new ArrayList<>();
 
         if (workoutMeasurement == 1){
             initData(null);
@@ -75,6 +71,7 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
     }
 
     private void initData(String measurement) {
+        recentList = new ArrayList<>();
         DatabaseHelper dbHelper = new DatabaseHelper(view.getContext());
         List<ActivityData> data = dbHelper.getActivityDataByName(workoutName);
 
@@ -91,12 +88,11 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
                 }
             } else {
                 DataSet noItems = new DataSet("", "No data available", "", "");
+                Log.d(TAG, "Added to recentList here1");
                 recentList.add(noItems);
             }
         } else if (workoutMeasurement == 3) {
-
             if (measurement.equals("Distance")){
-
                 Collections.sort(data, (object1, object2) -> object1.distance.compareTo(object2.distance));
                 if (!data.isEmpty()) {
                     for (int i = 0; i < data.size(); i++) { //Loop through records
@@ -111,6 +107,7 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
                     }
                 } else {
                     DataSet noItems = new DataSet("", "No data available", "", "");
+                    Log.d(TAG, "Added to recentList here2");
                     recentList.add(noItems);
                 }
             } else if (measurement.equals("Time")){
@@ -128,6 +125,7 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
                     }
                 } else {
                     DataSet noItems = new DataSet("", "No data available", "", "");
+                    Log.d(TAG, "Added to recentList here3");
                     recentList.add(noItems);
                 }
             } else if (measurement.equals("Pace")){
@@ -146,6 +144,7 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
                     }
                 } else {
                     DataSet noItems = new DataSet("", "No data available", "", "");
+                    Log.d(TAG, "Added to recentList here4");
                     recentList.add(noItems);
                 }
             }
@@ -166,6 +165,7 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
                 }
             } else {
                 DataSet noItems = new DataSet("", "No data available", "", "");
+                Log.d(TAG, "Added to recentList here5");
                 recentList.add(noItems);
             }
         } else if (workoutMeasurement == 2){
@@ -185,6 +185,7 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
                 }
             } else {
                 DataSet noItems = new DataSet("", "No data available", "", "");
+                Log.d(TAG, "Added to recentList here6");
                 recentList.add(noItems);
             }
         }
