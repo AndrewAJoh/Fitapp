@@ -100,6 +100,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(createWorkoutTable);
         db.execSQL(initializeWorkoutTableData);
         db.execSQL(createActivityTable);
+
+
+        //TODO: Debug data, remove this code after testing
+        String WORKOUT_TABLE_INITIAL_ROWS =
+                "('running', '2022-02-01', 1500, 4.00, null, null, null), " +
+                "('running', '2022-02-02', 1900, 3.75, null, null, null), " +
+                "('running', '2022-02-03', 1700, 3.12, null, null, null), " +
+                "('running', '2022-02-04', 1800, 4.25, null, null, null), " +
+                "('barbell curl', '2022-02-01', null, null, 15, 5, 6), " +
+                "('barbell curl', '2022-02-02', null, null, 15, 5, 8), " +
+                "('barbell curl', '2022-02-03', null, null, 15, 5, 10), " +
+                "('barbell curl', '2022-02-04', null, null, 20, 5, 6), " +
+                "('planks', '2022-02-01', 60, null, null, null, null), " +
+                "('planks', '2022-02-02', 65, null, null, null, null), " +
+                "('planks', '2022-02-03', 120, null, null, null, null), " +
+                "('planks', '2022-02-04', 80, null, null, null, null), " +
+                "('push-ups', '2022-02-01', null, null, null, 3, 20), " +
+                "('push-ups', '2022-02-02', null, null, null, 3, 23), " +
+                "('push-ups', '2022-02-03', null, null, null, 2, 25), " +
+                "('push-ups', '2022-02-04', null, null, null, 2, 30)";
+
+
+        String initializeActivityTableData = "INSERT INTO " + ACTIVITY_TABLE_TITLE + " (" +
+            ACTIVITY_TABLE_NAME          + ", " +
+            ACTIVITY_TABLE_DATE          + ", " +
+            ACTIVITY_TABLE_TIME          + ", " +
+            ACTIVITY_TABLE_DISTANCE          + ", " +
+            ACTIVITY_TABLE_WEIGHT          + ", " +
+            ACTIVITY_TABLE_REPS          + ", " +
+            ACTIVITY_TABLE_SETS   + ") VALUES " +
+            WORKOUT_TABLE_INITIAL_ROWS;
+
+        db.execSQL(initializeActivityTableData);
     }
 
     @Override
@@ -199,7 +232,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return ad;
     }
 
-    public List<ActivityData> getActivityDataByName(String activityName) {
+    public List<ActivityData> getActivityDataByName(String activityName, String metric, String order) {
         String logMessage = "getData: Getting data from " + ACTIVITY_TABLE_TITLE;
         Log.d(TAG, logMessage);
         SQLiteDatabase db = this.getWritableDatabase();
@@ -209,6 +242,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String query = "SELECT ID, Name, Date, Time, Distance, Weight, Reps, Sets FROM " +
                         DatabaseHelper.ACTIVITY_TABLE_TITLE +
                         " WHERE Name = '" + activityName + "'";
+
+        String queryOrder = " ORDER BY ";
+
+        if (order.equals("Recent")){
+            queryOrder += "ID";
+        } else{
+            if (metric.equals("Distance")){
+                queryOrder += "Distance";
+            } else if (metric.equals("Time")){
+                queryOrder += "Time";
+            } else if (metric.equals("Pace")) {
+                queryOrder += "(Distance/Time)";
+            } else if (metric.equals("Reps")){
+                queryOrder += "(Reps * Sets)";
+            } else if (metric.equals("Total")){
+                queryOrder += "(Weight * Reps * Sets)";
+            }
+        }
+
+        queryOrder += " DESC";
+        query += queryOrder;
+
+        Log.d(TAG, query);
 
         List<ActivityData> res = new ArrayList<ActivityData>();
         Cursor cur = db.rawQuery(query, null);

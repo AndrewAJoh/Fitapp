@@ -22,4 +22,9 @@
     <string-array name="SimpleWeightedMeasurements">
         <item> Reps </item>
     </string-array>
+    <string-array name="ActivityOrder">
+        <item> Recent </item>
+        <item> Top </item>
+    </string-array>
+
 </resources>

@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,13 +30,15 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
     private static final String TAG = "WorkoutList";
     private List<DataSet> topList;
     private ArrayAdapter<CharSequence> arrayAdapter;
+    private ArrayAdapter<CharSequence> orderAdapter;
     private ComplexAdapter adapter;
     private static int workoutMeasurement;
     private String workoutName;
     private WorkoutData workoutData;
     View view;
     DatabaseHelper dbHelper;
-    Spinner spinner;
+    Spinner metricSpinner;
+    Spinner orderSpinner;
 
     @Nullable
     @Override
@@ -43,34 +46,37 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
         Log.d(TAG, "OnCreateView: Started");
         view = inflater.inflate(R.layout.top_workout_tab, container, false);
         dbHelper = new DatabaseHelper(getContext());
-        spinner = view.findViewById(R.id.spinner);
+        metricSpinner = view.findViewById(R.id.metricSpinner);
+        orderSpinner = view.findViewById(R.id.orderSpinner);
+        workoutName = getActivity().getIntent().getStringExtra("workoutName").toLowerCase();
 
         //Determine what kind of spinner is needed based on the measurement type
 
         workoutData = dbHelper.getWorkoutDataByName(workoutName);
         int measurement = workoutData.measurement;
 
-        if (measurement == 3) {
-            arrayAdapter = ArrayAdapter.createFromResource(view.getContext(), R.array.WeightedMeasurements, android.R.layout.simple_spinner_item);
-        } else if (measurement == 4){
-            arrayAdapter = ArrayAdapter.createFromResource(view.getContext(), R.array.SimpleWeightedMeasurements, android.R.layout.simple_spinner_item);
-        } else if (measurement == 1) {
-            arrayAdapter = ArrayAdapter.createFromResource(view.getContext(), R.array.TimeMeasurements, android.R.layout.simple_spinner_item);
+        if (measurement == 1) {
+            arrayAdapter = ArrayAdapter.createFromResource(getContext(), R.array.WeightedMeasurements, android.R.layout.simple_spinner_item);
+        } else if (measurement == 2){
+            arrayAdapter = ArrayAdapter.createFromResource(getContext(), R.array.SimpleWeightedMeasurements, android.R.layout.simple_spinner_item);
+        } else if (measurement == 3) {
+            arrayAdapter = ArrayAdapter.createFromResource(getContext(), R.array.TimeMeasurements, android.R.layout.simple_spinner_item);
         } else {
-            arrayAdapter = ArrayAdapter.createFromResource(view.getContext(), R.array.SimpleTimeMeasurements, android.R.layout.simple_spinner_item);
+            arrayAdapter = ArrayAdapter.createFromResource(getContext(), R.array.SimpleTimeMeasurements, android.R.layout.simple_spinner_item);
         }
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        spinner.setAdapter(arrayAdapter);
+        metricSpinner.setAdapter(arrayAdapter);
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        orderAdapter = ArrayAdapter.createFromResource(getContext(), R.array.ActivityOrder, android.R.layout.simple_spinner_item);
+        orderSpinner.setAdapter(orderAdapter);
+
+        metricSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1,
-                                       int arg2, long arg3) {
-                // text = parent.getItemAtPosition(position).toString();
-                //sendDataToFragment(text);
-
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //New spinner value has been selected - initialize data again
+                updateFragmentList(metricSpinner.getSelectedItem().toString(), orderSpinner.getSelectedItem().toString());
             }
 
             @Override
@@ -80,19 +86,33 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
             }
         });
 
-        workoutName = getActivity().getIntent().getStringExtra("workoutName").toLowerCase();
+        orderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //New spinner value has been selected - initialize data again
+                updateFragmentList(metricSpinner.getSelectedItem().toString(), orderSpinner.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+
+            }
+        });
 
         WorkoutData workoutData = dbHelper.getWorkoutDataByName(workoutName);
         workoutMeasurement = workoutData.measurement;
 
+        //Set initial data
         if (workoutMeasurement == 1){
-            initData(null);
+            initData(null, "Recent");
         } else if (workoutMeasurement == 2){
-            initData(null);
+            initData(null, "Recent");
         } else if (workoutMeasurement == 3) {
-            initData("Distance");
+            initData("Distance", "Recent");
         } else {
-            initData(null);
+            initData(null, "Recent");
         }
 
         initRecyclerView();
@@ -114,14 +134,12 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
         return res;
     }
 
-    private void initData(String measurement) {
+    private void initData(String metric, String order) {
         topList = new ArrayList<>();
         DatabaseHelper dbHelper = new DatabaseHelper(view.getContext());
-        List<ActivityData> data = dbHelper.getActivityDataByName(workoutName);
+        List<ActivityData> data = dbHelper.getActivityDataByName(workoutName, metric, order);
 
         if (workoutMeasurement == 4) { //Time only - sort by time descending
-            Collections.sort(data, (object1, object2) -> object1.time.compareTo(object2.time));
-
             if (!data.isEmpty()) {
                 for (int i = 0; i < data.size(); i++) { //Loop through records
                     String time = formatSecondsIntoDate(data.get(i).time);
@@ -137,70 +155,38 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
                 topList.add(noItems);
             }
         } else if (workoutMeasurement == 3) { //Time with distance - sort by distance, total time or pace descending
-            if (measurement.equals("Distance")){
-                Collections.sort(data, (object1, object2) -> object1.distance.compareTo(object2.distance));
-                if (!data.isEmpty()) {
-                    for (int i = 0; i < data.size(); i++) { //Loop through records
-                        String time = formatSecondsIntoDate(data.get(i).time);
-                        String date = data.get(i).date;
-                        String id = String.valueOf(data.get(i).id);
-
-                        DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
-                        System.out.println("added " + dataset.getRawData() + " to the list");
-                        topList.add(dataset);
-                    }
-                } else {
-                    DataSet noItems = new DataSet("", "No data available", "", "");
-                    topList.add(noItems);
-                }
-            } else if (measurement.equals("Time")){
-                Collections.sort(data, (object1, object2) -> object1.time.compareTo(object2.time));
-
-                if (!data.isEmpty()) {
-                    for (int i = 0; i < data.size(); i++) { //Loop through records
-                        String time = formatSecondsIntoDate(data.get(i).time);
-                        String date = data.get(i).date;
-                        String id = String.valueOf(data.get(i).id);
-
-                        DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
-                        System.out.println("added " + dataset.getRawData() + " to the list");
-                        topList.add(dataset);
-                    }
-                } else {
-                    DataSet noItems = new DataSet("", "No data available", "", "");
-                    topList.add(noItems);
-                }
-            } else if (measurement.equals("Pace")){
-                //data = dbHelper.getData("SELECT Time, Distance, Date, (Distance/Time) AS Pace, ID FROM TimedTable4 WHERE Name = '" + name + "' ORDER BY PACE DESC");
-                Collections.sort(data, (object1, object2) -> object1.time.compareTo(object2.time)); //TODO: Fix this
-
-                if (!data.isEmpty()) {
-                    for (int i = 0; i < data.size(); i++) { //Loop through records
-                        String time = formatSecondsIntoDate(data.get(i).time);
-                        String date = data.get(i).date;
-                        String id = String.valueOf(data.get(i).id);
-
-                        DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
-                        System.out.println("added " + dataset.getRawData() + " to the list");
-                        topList.add(dataset);
-                    }
-                } else {
-                    DataSet noItems = new DataSet("", "No data available", "", "");
-                    topList.add(noItems);
-                }
-            }
-        } else if (workoutMeasurement == 1){ //Weight, sets, reps
-            //data = dbHelper.getData("SELECT Weight, Sets, Reps, Date, ID, (Weight * Sets * Reps) AS Total FROM WeightedTable2 WHERE Name = '" + name + "' ORDER BY Total DESC");
-
-            Collections.sort(data, (object1, object2) -> object1.weight.compareTo(object2.weight)); //TODO: Fix this
-
             if (!data.isEmpty()) {
                 for (int i = 0; i < data.size(); i++) { //Loop through records
-                    String time = formatSecondsIntoDate(data.get(i).time);
+
                     String date = data.get(i).date;
                     String id = String.valueOf(data.get(i).id);
 
-                    DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
+                    String value;
+                    if (metric.equals("Time")){
+                        value = formatSecondsIntoDate(data.get(i).time);
+                    } else if (metric.equals("Distance")){
+                        value = data.get(i).distance;
+                    } else { //Pace
+                        DecimalFormat df = new DecimalFormat("0.00");
+                        value = String.valueOf(df.format((Float.valueOf(data.get(i).distance)/data.get(i).time) * 3600));
+                    }
+                    DataSet dataset = new DataSet(String.valueOf(i + 1), value, date, id);
+
+                    System.out.println("added " + dataset.getRawData() + " to the list");
+                    topList.add(dataset);
+                }
+            } else {
+                DataSet noItems = new DataSet("", "No data available", "", "");
+                topList.add(noItems);
+            }
+        } else if (workoutMeasurement == 1){ //Weight, sets, reps
+            if (!data.isEmpty()) {
+                for (int i = 0; i < data.size(); i++) { //Loop through records
+                    String value = data.get(i).weight + " lbs " + data.get(i).sets + " x " + data.get(i).reps;
+                    String date = data.get(i).date;
+                    String id = String.valueOf(data.get(i).id);
+
+                    DataSet dataset = new DataSet(String.valueOf(i + 1), value, date, id);
                     System.out.println("added " + dataset.getRawData() + " to the list");
                     topList.add(dataset);
                 }
@@ -209,17 +195,13 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
                 topList.add(noItems);
             }
         } else if (workoutMeasurement == 2){ //Sets and Reps only - no weight
-            //data = dbHelper.getData("SELECT Sets, Reps, Date, ID, (Reps * Sets) AS Total FROM WeightedTable2 WHERE Name = '" + name + "' ORDER BY Total DESC");
-
-            Collections.sort(data, (object1, object2) -> object1.sets.compareTo(object2.sets)); //TODO: Fix this
-
             if (!data.isEmpty()) {
                 for (int i = 0; i < data.size(); i++) { //Loop through records
-                    String time = formatSecondsIntoDate(data.get(i).time);
+                    String value = data.get(i).sets + " x " + data.get(i).reps;
                     String date = data.get(i).date;
                     String id = String.valueOf(data.get(i).id);
 
-                    DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
+                    DataSet dataset = new DataSet(String.valueOf(i + 1), value, date, id);
                     System.out.println("added " + dataset.getRawData() + " to the list");
                     topList.add(dataset);
                 }
@@ -230,8 +212,8 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
         }
     }
 
-    public void updateFragmentList(String measurement){
-        initData(measurement);
+    public void updateFragmentList(String metric, String order){
+        initData(metric, order);
         initRecyclerView();
     }
 

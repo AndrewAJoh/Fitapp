@@ -42,168 +42,21 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
         WorkoutData workoutData = dbHelper.getWorkoutDataByName(workoutName);
         workoutMeasurement = workoutData.measurement;
 
-        if (workoutMeasurement == 1){
-            initData(null);
-        } else if (workoutMeasurement == 2){
-            initData(null);
-        } else if (workoutMeasurement == 3) {
-            initData("Distance");
-        } else {
-            initData(null);
-        }
-
         initRecyclerView();
         ((EventsOverviewActivity) getActivity()).setFragmentListener1(this);
         return view;
     }
 
-    private String formatSecondsIntoDate(int seconds){
-        int hours = seconds / 3600;
-        int minutes = (seconds / 60) % 60;
-        seconds = seconds % 60;
+    private void initData() {
 
-        String hourString = (hours < 10)? "0" + Integer.toString(hours) : Integer.toString(hours);
-        String minutesString = (minutes < 10)? "0" + Integer.toString(minutes) : Integer.toString(minutes);
-        String secondsString = (seconds < 10)? "0" + Integer.toString(seconds) : Integer.toString(seconds);
-
-        String res = hourString + ":" + minutesString + ":" + secondsString;
-        return res;
-    }
-
-    private void initData(String measurement) {
-        recentList = new ArrayList<>();
-        DatabaseHelper dbHelper = new DatabaseHelper(view.getContext());
-        List<ActivityData> data = dbHelper.getActivityDataByName(workoutName);
-
-        if (workoutMeasurement == 4) { //Timed simple
-            if (!data.isEmpty()) {
-                for (int i = 0; i < data.size(); i++) { //Loop through records
-                    String time = formatSecondsIntoDate(data.get(i).time);
-                    String date = data.get(i).date;
-                    String id = String.valueOf(data.get(i).id);
-
-                    DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
-                    System.out.println("added " + dataset.getRawData() + " to the list");
-                    recentList.add(dataset);
-                }
-            } else {
-                DataSet noItems = new DataSet("", "No data available", "", "");
-                Log.d(TAG, "Added to recentList here1");
-                recentList.add(noItems);
-            }
-        } else if (workoutMeasurement == 3) {
-            if (measurement.equals("Distance")){
-                Collections.sort(data, (object1, object2) -> object1.distance.compareTo(object2.distance));
-                if (!data.isEmpty()) {
-                    for (int i = 0; i < data.size(); i++) { //Loop through records
-                        String time = formatSecondsIntoDate(data.get(i).time);
-                        String date = data.get(i).date;
-                        String id = String.valueOf(data.get(i).id);
-
-                        DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
-                        System.out.println("added " + dataset.getRawData() + " to the list");
-                        recentList.add(dataset);
-
-                    }
-                } else {
-                    DataSet noItems = new DataSet("", "No data available", "", "");
-                    Log.d(TAG, "Added to recentList here2");
-                    recentList.add(noItems);
-                }
-            } else if (measurement.equals("Time")){
-                Collections.sort(data, (object1, object2) -> object1.time.compareTo(object2.time));
-
-                if (!data.isEmpty()) {
-                    for (int i = 0; i < data.size(); i++) { //Loop through records
-                        String time = formatSecondsIntoDate(data.get(i).time);
-                        String date = data.get(i).date;
-                        String id = String.valueOf(data.get(i).id);
-
-                        DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
-                        System.out.println("added " + dataset.getRawData() + " to the list");
-                        recentList.add(dataset);
-                    }
-                } else {
-                    DataSet noItems = new DataSet("", "No data available", "", "");
-                    Log.d(TAG, "Added to recentList here3");
-                    recentList.add(noItems);
-                }
-            } else if (measurement.equals("Pace")){
-                //data = dbHelper.getData("SELECT Time, Distance, Date, (Distance/Time) AS Pace, ID FROM TimedTable4 WHERE Name = '" + name + "' ORDER BY PACE DESC");
-                Collections.sort(data, (object1, object2) -> object1.time.compareTo(object2.time)); //TODO: Fix this
-
-                if (!data.isEmpty()) {
-                    for (int i = 0; i < data.size(); i++) { //Loop through records
-                        String time = formatSecondsIntoDate(data.get(i).time);
-                        String date = data.get(i).date;
-                        String id = String.valueOf(data.get(i).id);
-
-                        DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
-                        System.out.println("added " + dataset.getRawData() + " to the list");
-                        recentList.add(dataset);
-                    }
-                } else {
-                    DataSet noItems = new DataSet("", "No data available", "", "");
-                    Log.d(TAG, "Added to recentList here4");
-                    recentList.add(noItems);
-                }
-            }
-        } else if (workoutMeasurement == 1){
-            //data = dbHelper.getData("SELECT Weight, Sets, Reps, Date, ID, (Weight * Sets * Reps) AS Total FROM WeightedTable2 WHERE Name = '" + name + "' ORDER BY Total DESC");
-
-            Collections.sort(data, (object1, object2) -> object1.weight.compareTo(object2.weight)); //TODO: Fix this
-
-            if (!data.isEmpty()) {
-                for (int i = 0; i < data.size(); i++) { //Loop through records
-                    String time = formatSecondsIntoDate(data.get(i).time);
-                    String date = data.get(i).date;
-                    String id = String.valueOf(data.get(i).id);
-
-                    DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
-                    System.out.println("added " + dataset.getRawData() + " to the list");
-                    recentList.add(dataset);
-                }
-            } else {
-                DataSet noItems = new DataSet("", "No data available", "", "");
-                Log.d(TAG, "Added to recentList here5");
-                recentList.add(noItems);
-            }
-        } else if (workoutMeasurement == 2){
-            //data = dbHelper.getData("SELECT Sets, Reps, Date, ID, (Reps * Sets) AS Total FROM WeightedTable2 WHERE Name = '" + name + "' ORDER BY Total DESC");
-
-            Collections.sort(data, (object1, object2) -> object1.sets.compareTo(object2.sets)); //TODO: Fix this
-
-            if (!data.isEmpty()) {
-                for (int i = 0; i < data.size(); i++) { //Loop through records
-                    String time = formatSecondsIntoDate(data.get(i).time);
-                    String date = data.get(i).date;
-                    String id = String.valueOf(data.get(i).id);
-
-                    DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
-                    System.out.println("added " + dataset.getRawData() + " to the list");
-                    recentList.add(dataset);
-                }
-            } else {
-                DataSet noItems = new DataSet("", "No data available", "", "");
-                Log.d(TAG, "Added to recentList here6");
-                recentList.add(noItems);
-            }
-        }
     }
 
     public void updateFragmentList(String measurement){
-        initData(measurement);
         initRecyclerView();
     }
 
     private void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: init recent workouts");
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view_recent);
-        String name = getActivity().getIntent().getStringExtra("workoutName");
-
-        adapter = new ComplexAdapter(getActivity(), recentList, name);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(adapter);
     }
 
 }
