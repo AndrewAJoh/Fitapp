@@ -51,7 +51,7 @@ public class EventsOverviewActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager){
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
         adapter.addFragment(new WorkoutListFragment(), "List");
-        adapter.addFragment(new RecentWorkoutsFragment(), "Graph");
+        adapter.addFragment(new RecentWorkoutsFragment(), "Calendar");
         viewPager.setAdapter(adapter);
     }
 

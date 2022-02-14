@@ -4,6 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/AndyJ/AppData/Local/Android/Sdk/platforms/android-27/data/res/layout/simple_spinner_dropdown_item.xml" value="0.17907801418439717" />
+        <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.199" />
+        <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/drawable/ic_launcher_background.xml" value="0.199" />
+        <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/drawable/my_button_bg.xml" value="0.199" />
         <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/layout/activity_add_event.xml" value="0.36822916666666666" />
         <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/layout/activity_add_event_reps.xml" value="0.4317708333333333" />
         <entry key="..\:/Users/AndyJ/source/repos/Simplifit/app/src/main/res/layout/activity_add_event_timed_simple.xml" value="0.4317708333333333" />

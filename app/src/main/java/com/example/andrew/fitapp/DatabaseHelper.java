@@ -104,10 +104,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         //TODO: Debug data, remove this code after testing
         String WORKOUT_TABLE_INITIAL_ROWS =
-                "('running', '2022-02-01', 1500, 4.00, null, null, null), " +
-                "('running', '2022-02-02', 1900, 3.75, null, null, null), " +
-                "('running', '2022-02-03', 1700, 3.12, null, null, null), " +
-                "('running', '2022-02-04', 1800, 4.25, null, null, null), " +
+                "('running', '02/01/2022', 1500, 4.00, null, null, null), " +
+                "('running', '02/02/2022', 1900, 3.75, null, null, null), " +
+                "('running', '02/03/2022', 1700, 3.12, null, null, null), " +
+                "('running', '02/04/2022', 1800, 4.25, null, null, null), " +
                 "('barbell curl', '2022-02-01', null, null, 15, 5, 6), " +
                 "('barbell curl', '2022-02-02', null, null, 15, 5, 8), " +
                 "('barbell curl', '2022-02-03', null, null, 15, 5, 10), " +
