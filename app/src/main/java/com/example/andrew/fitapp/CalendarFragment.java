@@ -28,11 +28,8 @@ import java.util.Random;
  * Created by Andrew on 8/14/2018.
  */
 
-public class RecentWorkoutsFragment extends Fragment implements EventsOverviewActivity.FragmentListener{
-    private static final String TAG = "RecentWorkouts";
-    private List<DataSet> recentList;
-    private ComplexAdapter adapter;
-    private static int workoutMeasurement;
+public class CalendarFragment extends Fragment implements EventsOverviewActivity.FragmentListener{
+    private static final String TAG = "Calendar";
     private static String workoutName;
     View view;
     DatabaseHelper dbHelper;
@@ -47,7 +44,6 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
         workoutName = getActivity().getIntent().getStringExtra("workoutName").toLowerCase();
 
         WorkoutData workoutData = dbHelper.getWorkoutDataByName(workoutName);
-        workoutMeasurement = workoutData.measurement;
 
         initData();
 
@@ -169,8 +165,8 @@ public class RecentWorkoutsFragment extends Fragment implements EventsOverviewAc
         }
     }
 
-    public void updateFragmentList(String measurement){
-        initRecyclerView();
+    public void updateCalendar(){
+        initData();
     }
 
     private void initRecyclerView() {

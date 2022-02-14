@@ -104,22 +104,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         //TODO: Debug data, remove this code after testing
         String WORKOUT_TABLE_INITIAL_ROWS =
-                "('running', '02/01/2022', 1500, 4.00, null, null, null), " +
-                "('running', '02/02/2022', 1900, 3.75, null, null, null), " +
-                "('running', '02/03/2022', 1700, 3.12, null, null, null), " +
-                "('running', '02/04/2022', 1800, 4.25, null, null, null), " +
-                "('barbell curl', '2022-02-01', null, null, 15, 5, 6), " +
-                "('barbell curl', '2022-02-02', null, null, 15, 5, 8), " +
-                "('barbell curl', '2022-02-03', null, null, 15, 5, 10), " +
-                "('barbell curl', '2022-02-04', null, null, 20, 5, 6), " +
-                "('planks', '2022-02-01', 60, null, null, null, null), " +
-                "('planks', '2022-02-02', 65, null, null, null, null), " +
-                "('planks', '2022-02-03', 120, null, null, null, null), " +
-                "('planks', '2022-02-04', 80, null, null, null, null), " +
-                "('push-ups', '2022-02-01', null, null, null, 3, 20), " +
-                "('push-ups', '2022-02-02', null, null, null, 3, 23), " +
-                "('push-ups', '2022-02-03', null, null, null, 2, 25), " +
-                "('push-ups', '2022-02-04', null, null, null, 2, 30)";
+                "('running', '02/13/2022', 1500, 4.00, null, null, null), " +
+                "('running', '02/10/2022', 1900, 3.75, null, null, null), " +
+                "('running', '02/06/2022', 1700, 3.12, null, null, null), " +
+                "('running', '01/04/2022', 1800, 4.25, null, null, null), " +
+                "('running', '02/02/2022', 1800, 4.50, null, null, null), " +
+                "('running', '01/31/2022', 1800, 2.00, null, null, null), " +
+                "('running', '01/29/2022', 1800, 3.35, null, null, null), " +
+                "('running', '01/28/2022', 1800, 4.15, null, null, null), " +
+                "('running', '01/25/2022', 1800, 1.50, null, null, null), " +
+                "('running', '01/20/2022', 1800, 1.00, null, null, null), " +
+                "('running', '01/18/2022', 1800, 3.00, null, null, null), " +
+                "('running', '01/15/2022', 1800, 2.50, null, null, null)";
 
 
         String initializeActivityTableData = "INSERT INTO " + ACTIVITY_TABLE_TITLE + " (" +

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Simplifit</string>
+    <string name="app_name">Fitapp</string>
     <string name="edit_message">Enter a message</string>
     <string name="button_send">send</string>
     <string name="title_activity_display_message">DisplayMessageActivity</string>
