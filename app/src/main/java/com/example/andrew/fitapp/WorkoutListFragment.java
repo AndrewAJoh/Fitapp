@@ -1,7 +1,5 @@
 package com.example.andrew.fitapp;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,13 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -28,7 +23,7 @@ import java.util.List;
 
 public class WorkoutListFragment extends Fragment implements EventsOverviewActivity.FragmentListener{
     private static final String TAG = "WorkoutList";
-    private List<DataSet> topList;
+    private List<EventItem> activityList;
     private ArrayAdapter<CharSequence> arrayAdapter;
     private ArrayAdapter<CharSequence> orderAdapter;
     private ComplexAdapter adapter;
@@ -44,7 +39,7 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         Log.d(TAG, "OnCreateView: Started");
-        view = inflater.inflate(R.layout.top_workout_tab, container, false);
+        view = inflater.inflate(R.layout.list_tab, container, false);
         dbHelper = new DatabaseHelper(getContext());
         metricSpinner = view.findViewById(R.id.metricSpinner);
         orderSpinner = view.findViewById(R.id.orderSpinner);
@@ -135,9 +130,9 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
     }
 
     private void initData(String metric, String order) {
-        topList = new ArrayList<>();
+        activityList = new ArrayList<>();
         DatabaseHelper dbHelper = new DatabaseHelper(view.getContext());
-        List<ActivityData> data = dbHelper.getActivityDataByName(workoutName, metric, order);
+        List<EventData> data = dbHelper.getEventDataByName(workoutName, metric, order);
 
         if (workoutMeasurement == 4) { //Time only - sort by time descending
             if (!data.isEmpty()) {
@@ -146,13 +141,10 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
                     String date = data.get(i).date;
                     String id = String.valueOf(data.get(i).id);
 
-                    DataSet dataset = new DataSet(String.valueOf(i + 1), time, date, id);
-                    System.out.println("added " + dataset.getRawData() + " to the list");
-                    topList.add(dataset);
+                    EventItem dataset = new EventItem(String.valueOf(i + 1), time, date, id);
+                    System.out.println("added " + dataset.data + " to the list");
+                    activityList.add(dataset);
                 }
-            } else {
-                DataSet noItems = new DataSet("", "No data available", "", "");
-                topList.add(noItems);
             }
         } else if (workoutMeasurement == 3) { //Time with distance - sort by distance, total time or pace descending
             if (!data.isEmpty()) {
@@ -170,14 +162,11 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
                         DecimalFormat df = new DecimalFormat("0.00");
                         value = String.valueOf(df.format((Float.valueOf(data.get(i).distance)/data.get(i).time) * 3600));
                     }
-                    DataSet dataset = new DataSet(String.valueOf(i + 1), value, date, id);
+                    EventItem dataset = new EventItem(String.valueOf(i + 1), value, date, id);
 
-                    System.out.println("added " + dataset.getRawData() + " to the list");
-                    topList.add(dataset);
+                    System.out.println("added " + dataset.data + " to the list");
+                    activityList.add(dataset);
                 }
-            } else {
-                DataSet noItems = new DataSet("", "No data available", "", "");
-                topList.add(noItems);
             }
         } else if (workoutMeasurement == 1){ //Weight, sets, reps
             if (!data.isEmpty()) {
@@ -186,13 +175,10 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
                     String date = data.get(i).date;
                     String id = String.valueOf(data.get(i).id);
 
-                    DataSet dataset = new DataSet(String.valueOf(i + 1), value, date, id);
-                    System.out.println("added " + dataset.getRawData() + " to the list");
-                    topList.add(dataset);
+                    EventItem dataset = new EventItem(String.valueOf(i + 1), value, date, id);
+                    System.out.println("added " + dataset.data + " to the list");
+                    activityList.add(dataset);
                 }
-            } else {
-                DataSet noItems = new DataSet("", "No data available", "", "");
-                topList.add(noItems);
             }
         } else if (workoutMeasurement == 2){ //Sets and Reps only - no weight
             if (!data.isEmpty()) {
@@ -201,13 +187,10 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
                     String date = data.get(i).date;
                     String id = String.valueOf(data.get(i).id);
 
-                    DataSet dataset = new DataSet(String.valueOf(i + 1), value, date, id);
-                    System.out.println("added " + dataset.getRawData() + " to the list");
-                    topList.add(dataset);
+                    EventItem dataset = new EventItem(String.valueOf(i + 1), value, date, id);
+                    System.out.println("added " + dataset.data + " to the list");
+                    activityList.add(dataset);
                 }
-            } else {
-                DataSet noItems = new DataSet("", "No data available", "", "");
-                topList.add(noItems);
             }
         }
     }
@@ -221,7 +204,7 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
         Log.d(TAG, "initRecyclerView: init top workouts");
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view_top);
         String name = getActivity().getIntent().getStringExtra("workoutName");
-        adapter = new ComplexAdapter(getActivity(), topList, name);
+        adapter = new ComplexAdapter(getActivity(), activityList, name);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
     }

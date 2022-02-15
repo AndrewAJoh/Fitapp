@@ -17,7 +17,7 @@ import android.widget.TextView;
  * Created by Andrew on 7/19/2018.
  */
 
-public class AddActivity extends AppCompatActivity {
+public class AddWorkoutActivity extends AppCompatActivity {
 
     DatabaseHelper dbHelper = new DatabaseHelper(this);
     private static final String TAG = "AddActivity";

@@ -104,7 +104,7 @@ public class AddEventActivity extends AppCompatActivity {
         Boolean acceptable = true;
         Intent intent = new Intent();
 
-        ActivityData newActivity;
+        EventData newActivity;
         String newActivityName = getIntent().getStringExtra("workoutName");
 
         if (workoutMeasurement == 1){
@@ -121,7 +121,7 @@ public class AddEventActivity extends AppCompatActivity {
             Date currentDate = new Date();
             String formattedDate = new SimpleDateFormat("MM/dd/yyyy").format(currentDate);
 
-            newActivity = new ActivityData(null, newActivityName, formattedDate, null, null, weightString, repsString, setsString);
+            newActivity = new EventData(null, newActivityName, formattedDate, null, null, weightString, repsString, setsString);
 
 
         } else if (workoutMeasurement == 2){
@@ -135,7 +135,7 @@ public class AddEventActivity extends AppCompatActivity {
             Date currentDate = new Date();
             String formattedDate = new SimpleDateFormat("MM/dd/yyyy").format(currentDate);
 
-            newActivity = new ActivityData(null, newActivityName, formattedDate, null, null, null, repsString, setsString);
+            newActivity = new EventData(null, newActivityName, formattedDate, null, null, null, repsString, setsString);
 
         } else if (workoutMeasurement == 3){
             //Time and Distance Activity
@@ -175,7 +175,7 @@ public class AddEventActivity extends AppCompatActivity {
             Date currentDate = new Date();
             String formattedDate = new SimpleDateFormat("MM/dd/yyyy").format(currentDate);
 
-            newActivity = new ActivityData(null, newActivityName, formattedDate, time, distanceString, null, null, null);
+            newActivity = new EventData(null, newActivityName, formattedDate, time, distanceString, null, null, null);
 
             if (!acceptable) {
                 Toast toast = Toast.makeText(getApplicationContext(),
@@ -214,7 +214,7 @@ public class AddEventActivity extends AppCompatActivity {
             Date currentDate = new Date();
             String formattedDate = new SimpleDateFormat("MM/dd/yyyy").format(currentDate);
 
-            newActivity = new ActivityData(null, newActivityName, formattedDate, time, null, null, null, null);
+            newActivity = new EventData(null, newActivityName, formattedDate, time, null, null, null, null);
 
             if (!acceptable){
                 Toast toast = Toast.makeText(getApplicationContext(),
@@ -225,7 +225,7 @@ public class AddEventActivity extends AppCompatActivity {
         }
 
         if (acceptable) {
-            dbHelper.addActivityData(newActivity);
+            dbHelper.addEventData(newActivity);
             setResult(RESULT_OK, intent);
             finish();
         }

@@ -29,7 +29,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".SelectActivity" />
         </activity>
-        <activity android:name=".AddActivity"
+        <activity android:name=".AddWorkoutActivity"
             android:parentActivityName=".SelectActivity"
             android:launchMode="singleTop">
             <meta-data

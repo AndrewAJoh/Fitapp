@@ -20,21 +20,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DatabaseHelper";
     private static final String DATABASE_NAME = "FIT";
     public static final String WORKOUT_TABLE_TITLE = "WORKOUTS";
-    public static final String ACTIVITY_TABLE_TITLE = "ACTIVITY";
+    public static final String EVENT_TABLE_TITLE = "EVENT";
 
     //Workout Table
     private static final String WORKOUT_TABLE_NAME = "Name";
     private static final String WORKOUT_TABLE_TYPE = "Type";
     private static final String WORKOUT_TABLE_MEASUREMENT = "Measurement";
     //Activity Table
-    private static final String ACTIVITY_TABLE_ID = "ID";
-    private static final String ACTIVITY_TABLE_NAME = "Name";
-    private static final String ACTIVITY_TABLE_DATE = "Date";
-    private static final String ACTIVITY_TABLE_TIME = "Time";
-    private static final String ACTIVITY_TABLE_DISTANCE = "Distance";
-    private static final String ACTIVITY_TABLE_WEIGHT = "Weight";
-    private static final String ACTIVITY_TABLE_REPS = "Reps";
-    private static final String ACTIVITY_TABLE_SETS = "Sets";
+    private static final String EVENT_TABLE_ID = "ID";
+    private static final String EVENT_TABLE_NAME = "Name";
+    private static final String EVENT_TABLE_DATE = "Date";
+    private static final String EVENT_TABLE_TIME = "Time";
+    private static final String EVENT_TABLE_DISTANCE = "Distance";
+    private static final String EVENT_TABLE_WEIGHT = "Weight";
+    private static final String EVENT_TABLE_REPS = "Reps";
+    private static final String EVENT_TABLE_SETS = "Sets";
 
     private static final String WORKOUT_TABLE_INITIAL_ROWS =
         "('running', 'Cardio', 3), " +
@@ -87,15 +87,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             WORKOUT_TABLE_INITIAL_ROWS;
 
         String createActivityTable =
-            "CREATE TABLE IF NOT EXISTS " + ACTIVITY_TABLE_TITLE + " (" +
-            ACTIVITY_TABLE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            ACTIVITY_TABLE_NAME         + " TEXT, " +
-            ACTIVITY_TABLE_DATE         + " TEXT, " +
-            ACTIVITY_TABLE_TIME         + " INTEGER, " +
-            ACTIVITY_TABLE_DISTANCE     + " REAL, " +
-            ACTIVITY_TABLE_WEIGHT       + " TEXT, " +
-            ACTIVITY_TABLE_REPS         + " INTEGER, " +
-            ACTIVITY_TABLE_SETS         + " INTEGER)";
+            "CREATE TABLE IF NOT EXISTS " + EVENT_TABLE_TITLE + " (" +
+            EVENT_TABLE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            EVENT_TABLE_NAME         + " TEXT, " +
+            EVENT_TABLE_DATE         + " TEXT, " +
+            EVENT_TABLE_TIME         + " INTEGER, " +
+            EVENT_TABLE_DISTANCE     + " REAL, " +
+            EVENT_TABLE_WEIGHT       + " TEXT, " +
+            EVENT_TABLE_REPS         + " INTEGER, " +
+            EVENT_TABLE_SETS         + " INTEGER)";
 
         db.execSQL(createWorkoutTable);
         db.execSQL(initializeWorkoutTableData);
@@ -118,17 +118,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "('running', '01/15/2022', 1800, 2.50, null, null, null)";
 
 
-        String initializeActivityTableData = "INSERT INTO " + ACTIVITY_TABLE_TITLE + " (" +
-            ACTIVITY_TABLE_NAME          + ", " +
-            ACTIVITY_TABLE_DATE          + ", " +
-            ACTIVITY_TABLE_TIME          + ", " +
-            ACTIVITY_TABLE_DISTANCE          + ", " +
-            ACTIVITY_TABLE_WEIGHT          + ", " +
-            ACTIVITY_TABLE_REPS          + ", " +
-            ACTIVITY_TABLE_SETS   + ") VALUES " +
+        String initializeEventTableData = "INSERT INTO " + EVENT_TABLE_TITLE + " (" +
+            EVENT_TABLE_NAME          + ", " +
+            EVENT_TABLE_DATE          + ", " +
+            EVENT_TABLE_TIME          + ", " +
+            EVENT_TABLE_DISTANCE          + ", " +
+            EVENT_TABLE_WEIGHT          + ", " +
+            EVENT_TABLE_REPS          + ", " +
+            EVENT_TABLE_SETS   + ") VALUES " +
             WORKOUT_TABLE_INITIAL_ROWS;
 
-        db.execSQL(initializeActivityTableData);
+        db.execSQL(initializeEventTableData);
     }
 
     @Override
@@ -163,19 +163,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean addActivityData(ActivityData activity){
+    public boolean addEventData(EventData activity){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
-        contentValues.put(ACTIVITY_TABLE_NAME, activity.name);
-        contentValues.put(ACTIVITY_TABLE_DATE, activity.date);
-        contentValues.put(ACTIVITY_TABLE_TIME, activity.time);
-        contentValues.put(ACTIVITY_TABLE_DISTANCE, activity.distance);
-        contentValues.put(ACTIVITY_TABLE_WEIGHT, activity.weight);
-        contentValues.put(ACTIVITY_TABLE_SETS, activity.sets);
-        contentValues.put(ACTIVITY_TABLE_REPS, activity.reps);
+        contentValues.put(EVENT_TABLE_NAME, activity.name);
+        contentValues.put(EVENT_TABLE_DATE, activity.date);
+        contentValues.put(EVENT_TABLE_TIME, activity.time);
+        contentValues.put(EVENT_TABLE_DISTANCE, activity.distance);
+        contentValues.put(EVENT_TABLE_WEIGHT, activity.weight);
+        contentValues.put(EVENT_TABLE_SETS, activity.sets);
+        contentValues.put(EVENT_TABLE_REPS, activity.reps);
 
-        long result = db.insert(ACTIVITY_TABLE_TITLE, null, contentValues);
+        long result = db.insert(EVENT_TABLE_TITLE, null, contentValues);
 
         if (result == -1) {
             Log.d(TAG, "addData: Failure");
@@ -193,13 +193,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return statement.simpleQueryForLong();
     }
 
-    public ActivityData getActivityDataById(String id){
-        String logMessage = "getData: Getting data from " + ACTIVITY_TABLE_TITLE;
+    public EventData getEventDataById(String id){
+        String logMessage = "getData: Getting data from " + EVENT_TABLE_TITLE;
         Log.d(TAG, logMessage);
         SQLiteDatabase db = this.getWritableDatabase();
 
         String query = "SELECT ID, Name, Date, Time, Distance, Weight, Reps, Sets FROM " +
-                DatabaseHelper.ACTIVITY_TABLE_TITLE +
+                DatabaseHelper.EVENT_TABLE_TITLE +
                 " WHERE ID = '" + id + "'";
 
         Cursor cur = db.rawQuery(query, null);
@@ -213,7 +213,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cur.getString(6) + ", " +
             cur.getString(7) + "\n";
 
-        ActivityData ad = new ActivityData(
+        EventData ad = new EventData(
                 cur.getInt(0),
                 cur.getString(1),
                 cur.getString(2),
@@ -228,15 +228,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return ad;
     }
 
-    public List<ActivityData> getActivityDataByName(String activityName, String metric, String order) {
-        String logMessage = "getData: Getting data from " + ACTIVITY_TABLE_TITLE;
+    public List<EventData> getEventDataByName(String activityName, String metric, String order) {
+        String logMessage = "getData: Getting data from " + EVENT_TABLE_TITLE;
         Log.d(TAG, logMessage);
         SQLiteDatabase db = this.getWritableDatabase();
 
         //TODO: Parse activityName for bad characters
 
         String query = "SELECT ID, Name, Date, Time, Distance, Weight, Reps, Sets FROM " +
-                        DatabaseHelper.ACTIVITY_TABLE_TITLE +
+                        DatabaseHelper.EVENT_TABLE_TITLE +
                         " WHERE Name = '" + activityName + "'";
 
         String queryOrder = " ORDER BY ";
@@ -262,7 +262,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Log.d(TAG, query);
 
-        List<ActivityData> res = new ArrayList<ActivityData>();
+        List<EventData> res = new ArrayList<EventData>();
         Cursor cur = db.rawQuery(query, null);
         String debugString = "";
 
@@ -278,7 +278,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     cur.getString(6) + ", " +
                     cur.getString(7) + "\n";
 
-                ActivityData ad = new ActivityData(
+                EventData ad = new EventData(
                     cur.getInt(0),
                     cur.getString(1),
                     cur.getString(2),
@@ -352,38 +352,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return wd;
     }
 
-    public boolean deleteActivity(String weightOrTime, String ID){
-        SQLiteDatabase db = this.getWritableDatabase();
-        long result0 = 0;
-        long result1 = 0;
-        result0 = db.delete(WORKOUT_TABLE_TITLE, "Name = '" + ID + "'", null);
-        Log.d(TAG, "deleteActivity: Deleting " + ID + " " + "from " + WORKOUT_TABLE_TITLE);
-        if (weightOrTime.equals("weight")) {
-            result1 = db.delete(ACTIVITY_TABLE_TITLE, "Name = '" + ID + "'", null);
-            Log.d(TAG, "deleteActivity: Deleting " + ID + " " + "from " + ACTIVITY_TABLE_TITLE);
-        } else {
-            result1 = db.delete(ACTIVITY_TABLE_TITLE, "Name = '" + ID + "'", null);
-            Log.d(TAG, "deleteActivity: Deleting " + ID + " " + "from " + ACTIVITY_TABLE_TITLE);
-        }
-        if (result0 == -1 || result1 == -1) {
-            Log.d(TAG, "deleteActivity: Failure");
-            return false;
-        }
-        else{
-            Log.d(TAG, "deleteActivity: Success");
-            return true;
-        }
-    }
-
     public boolean deleteEvent(String weightOrTime, String ID) {
         SQLiteDatabase db = this.getWritableDatabase();
         long result = 0;
         if (weightOrTime.equals("Weight")) {
-            result = db.delete(ACTIVITY_TABLE_TITLE, "ID = '" + ID + "'", null);
-            Log.d(TAG, "deleteEvent: Deleting " + ID + " " + "from " + ACTIVITY_TABLE_TITLE);
+            result = db.delete(EVENT_TABLE_TITLE, "ID = '" + ID + "'", null);
+            Log.d(TAG, "deleteEvent: Deleting " + ID + " " + "from " + EVENT_TABLE_TITLE);
         } else {
-            result = db.delete(ACTIVITY_TABLE_TITLE, "ID = '" + ID + "'", null);
-            Log.d(TAG, "deleteEvent: Deleting " + ID + " " + "from " + ACTIVITY_TABLE_TITLE);
+            result = db.delete(EVENT_TABLE_TITLE, "ID = '" + ID + "'", null);
+            Log.d(TAG, "deleteEvent: Deleting " + ID + " " + "from " + EVENT_TABLE_TITLE);
         }
         if (result == -1) {
             Log.d(TAG, "deleteEvent: Failure");

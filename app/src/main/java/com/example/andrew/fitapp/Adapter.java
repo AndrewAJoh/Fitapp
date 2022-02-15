@@ -1,13 +1,11 @@
 package com.example.andrew.fitapp;
 import android.app.Activity;
-import android.support.v7.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -16,9 +14,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.app.Activity.RESULT_OK;
-import static android.support.v4.app.ActivityCompat.startActivityForResult;
 
 /**
  * Created by Andrew on 7/17/2018.

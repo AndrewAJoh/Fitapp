@@ -17,12 +17,10 @@ import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by Andrew on 8/14/2018.
@@ -38,7 +36,7 @@ public class CalendarFragment extends Fragment implements EventsOverviewActivity
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         Log.d(TAG, "OnCreateView: Started");
-        view = inflater.inflate(R.layout.recent_workout_tab, container, false);
+        view = inflater.inflate(R.layout.calendar_tab, container, false);
         dbHelper = new DatabaseHelper(getContext());
 
         workoutName = getActivity().getIntent().getStringExtra("workoutName").toLowerCase();
@@ -54,7 +52,7 @@ public class CalendarFragment extends Fragment implements EventsOverviewActivity
 
     private void initData() {
 
-        List<ActivityData> activityList = dbHelper.getActivityDataByName(workoutName, null, "Recent");
+        List<EventData> activityList = dbHelper.getEventDataByName(workoutName, null, "Recent");
 
         HashMap<String,Integer> activityDateMap = new HashMap<String, Integer>();
 
@@ -78,12 +76,12 @@ public class CalendarFragment extends Fragment implements EventsOverviewActivity
 
         int buttonStyle = R.style.Base_Widget_AppCompat_Button_Borderless; //Create button without shadow
         TableRow.LayoutParams llp = new TableRow.LayoutParams(95, 95);
-        llp.setMargins(0, 0, 2, 0);//2px right-margin
+        llp.setMargins(0, 0, 5, 0);//2px right-margin
 
 
         for (int j = 0; j < 16; j++){
             tr = new TableRow(getContext());
-            tr.setPadding(0, 0, 0, 2); //Border between rows
+            tr.setPadding(0, 0, 0, 5); //Border between rows
             tr.setGravity(Gravity.CENTER_HORIZONTAL);
             for (int i = 0; i < 8; i++){
                 if (j == 0 && i >= dayOfWeek + 1){     //Future date - set as background color

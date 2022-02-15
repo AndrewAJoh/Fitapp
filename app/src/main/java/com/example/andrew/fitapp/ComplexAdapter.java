@@ -1,6 +1,5 @@
 package com.example.andrew.fitapp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -9,17 +8,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.andrew.fitapp.Adapter;
-import com.example.andrew.fitapp.DataSet;
-import com.example.andrew.fitapp.EventHolder;
-import com.example.andrew.fitapp.R;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,15 +19,20 @@ import java.util.List;
 public class ComplexAdapter extends RecyclerView.Adapter<ComplexAdapter.SecondViewHolder> {
 
     private static final String TAG = "ComplexAdapter";
-    private List<DataSet> items;
+    private List<EventItem> activityList;
     private static String name;
 
 
-    public ComplexAdapter(Context context, List<DataSet> workoutNames, String workoutName){
-        items = workoutNames;
-        String logName = "Complex adapter workoutNames size: " + String.valueOf(workoutNames.size());
+    public ComplexAdapter(Context context, List<EventItem> activityListInput, String workoutName){
+        activityList = activityListInput;
+        String logName = "Complex adapter workoutNames size: " + String.valueOf(activityList.size());
         Log.d(TAG, logName);
         name = workoutName;
+
+        if (getItemCount() == 0){
+            EventItem blankActivity = new EventItem("", "No Data Available", "", "");
+            activityList.add(blankActivity);
+        }
     }
 
     Context mContext;
@@ -51,31 +47,31 @@ public class ComplexAdapter extends RecyclerView.Adapter<ComplexAdapter.SecondVi
     @Override
     public void onBindViewHolder(@NonNull SecondViewHolder holder, final int position) {
         //Called every time a view is displayed
-        final String number = items.get(position).getNumber();
-        final String rawData = items.get(position).getRawData();
-        final String date = items.get(position).getDate();
-        final String id = items.get(position).getId();
+        Log.d(TAG, "THIS WAS CALLED");
+        final String number = activityList.get(position).number;
         holder.text1.setText(number);
-        holder.text2.setText(rawData);
+
+        final String data = activityList.get(position).data;
+        holder.text2.setText(data);
+
+        final String date = activityList.get(position).date;
         holder.text3.setText(date);
-        holder.layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "clicked on button");
-                Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
-                intent.putExtra("workoutName", name);
-                intent.putExtra("date", date);
-                intent.putExtra("id", id);
-                if (!date.equals("")) {
-                    ((Activity) mContext).startActivity(intent);
-                }
-            }
+
+        final String id = activityList.get(position).id;
+
+        holder.layout.setOnClickListener(v -> {
+            Log.d(TAG, "clicked on button");
+            Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
+            intent.putExtra("workoutName", name);
+            intent.putExtra("date", date);
+            intent.putExtra("id", id);
+            (mContext).startActivity(intent);
         });
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return activityList.size();
     }
 
     public class SecondViewHolder extends RecyclerView.ViewHolder{
@@ -88,7 +84,7 @@ public class ComplexAdapter extends RecyclerView.Adapter<ComplexAdapter.SecondVi
         public SecondViewHolder(View itemView) {
             super(itemView);
             //Gets layout from layout_eventholder
-            layout = (RelativeLayout) itemView.findViewById(R.id.llContainer);
+            layout = itemView.findViewById(R.id.llContainer);
             text1 = itemView.findViewById(R.id.number);
             text2 = itemView.findViewById(R.id.rawData);
             text3 = itemView.findViewById(R.id.date);

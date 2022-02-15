@@ -2,7 +2,6 @@ package com.example.andrew.fitapp;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -11,13 +10,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * Created by Andrew on 7/19/2018.
@@ -63,7 +55,7 @@ public class EventsOverviewActivity extends AppCompatActivity {
 
     public void deleteWorkout(MenuItem item) {
         String name = getIntent().getStringExtra("workoutName");
-        dbHelper.deleteActivity("Weight", name); //TODO: Fix this
+        dbHelper.deleteEvent("Weight", name); //TODO: Fix this
         finish();
     }
 
@@ -112,7 +104,7 @@ public class EventsOverviewActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.moreOptions:
-                Intent i = new Intent(this, AddActivity.class);
+                Intent i = new Intent(this, AddWorkoutActivity.class);
                 i.putExtra("workoutType", getIntent().getStringExtra("workoutType"));
                 return true;
             default:

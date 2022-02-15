@@ -48,7 +48,7 @@ public class SelectActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.addType:
-                Intent i = new Intent(this, AddActivity.class);
+                Intent i = new Intent(this, AddWorkoutActivity.class);
                 i.putExtra("workoutType", getIntent().getStringExtra("workoutType"));
                 this.startActivityForResult(i, 0);
                 return true;

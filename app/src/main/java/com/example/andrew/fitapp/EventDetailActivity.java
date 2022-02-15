@@ -1,15 +1,11 @@
 package com.example.andrew.fitapp;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-
-import java.util.List;
 
 /**
  * Created by Andrew on 9/6/2018.
@@ -39,13 +35,13 @@ public class EventDetailActivity extends AppCompatActivity {
         TextView workoutTypeDisplayRight = findViewById(R.id.workoutTypeDisplayRight);
         workoutNameDisplayRight.setText(formattedWorkoutName);
 
-        ActivityData activityData = dbHelper.getActivityDataById(activityId);
+        EventData eventData = dbHelper.getEventDataById(activityId);
 
         if (measurement == 1) {
             setContentView(R.layout.activity_entry_detail_weights);
 
-            String weight = activityData.weight;
-            String setsReps = activityData.sets + " x " + activityData.reps;
+            String weight = eventData.weight;
+            String setsReps = eventData.sets + " x " + eventData.reps;
 
             workoutTypeDisplayRight.setText("Weight and Reps");
 
@@ -61,7 +57,7 @@ public class EventDetailActivity extends AppCompatActivity {
         } else if (measurement == 2){
             setContentView(R.layout.activity_entry_detail_weights_simple);
 
-            String setsReps = activityData.sets + " x " + activityData.reps;
+            String setsReps = eventData.sets + " x " + eventData.reps;
 
             workoutTypeDisplayRight.setText("Reps");
 
@@ -75,7 +71,7 @@ public class EventDetailActivity extends AppCompatActivity {
                 setContentView(R.layout.activity_entry_detail_distance);
                 workoutTypeDisplayRight.setText("Time and Distance");
                 TextView distanceRight = findViewById(R.id.distanceRight);
-                String distance = activityData.distance;
+                String distance = eventData.distance;
                 distanceRight.setText(distance);
             } else {
                 setContentView(R.layout.activity_entry_detail_simple);
@@ -86,7 +82,7 @@ public class EventDetailActivity extends AppCompatActivity {
             dateRight.setText(date);
 
             TextView timeRight = findViewById(R.id.timeRight);
-            int time = activityData.time;
+            int time = eventData.time;
             String formattedTime = formatSecondsIntoDate(time);
 
             timeRight.setText(formattedTime);
