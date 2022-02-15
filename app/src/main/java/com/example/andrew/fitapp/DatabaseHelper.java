@@ -202,18 +202,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 DatabaseHelper.EVENT_TABLE_TITLE +
                 " WHERE ID = '" + id + "'";
 
+        Log.d(TAG, query);
+
         Cursor cur = db.rawQuery(query, null);
 
-        String debugString = cur.getInt(0) + ", " +
-            cur.getString(1) + ", " +
-            cur.getString(2) + ", " +
-            cur.getInt(3) + ", " +
-            cur.getString(4) + ", " +
-            cur.getString(5) + ", " +
-            cur.getString(6) + ", " +
-            cur.getString(7) + "\n";
+        String debugString = "";
 
-        EventData ad = new EventData(
+        EventData ad = null;
+
+        if (cur.getCount() != 0) {
+            cur.moveToFirst();
+            debugString += cur.getInt(0) + ", " +
+                cur.getString(1) + ", " +
+                cur.getString(2) + ", " +
+                cur.getInt(3) + ", " +
+                cur.getString(4) + ", " +
+                cur.getString(5) + ", " +
+                cur.getString(6) + ", " +
+                cur.getString(7) + "\n";
+
+            WorkoutData wd = new WorkoutData(
+                cur.getString(0),
+                cur.getString(1),
+                cur.getInt(2));
+
+            Log.d("QUERY RETURNED: ", debugString);
+
+            ad = new EventData(
                 cur.getInt(0),
                 cur.getString(1),
                 cur.getString(2),
@@ -222,8 +237,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cur.getString(5),
                 cur.getString(6),
                 cur.getString(7));
-
-        Log.d("QUERY RETURNED: ", debugString);
+        }
 
         return ad;
     }

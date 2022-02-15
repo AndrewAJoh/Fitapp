@@ -12,33 +12,35 @@ import android.widget.TextView;
  */
 
 public class EventDetailActivity extends AppCompatActivity {
-    private static final String TAG = "EntryDetail";
+    private static final String TAG = "EventDetailActivity";
     DatabaseHelper dbHelper;
-    private static int measurement;
-    private static String activityId;
+    private int measurement;
+    private String eventId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "OnCreate: started");
         super.onCreate(savedInstanceState);
         dbHelper = new DatabaseHelper(this);
-        String workoutName = getIntent().getStringExtra("workoutName");
-        String formattedWorkoutName = workoutName.substring(0, 1).toUpperCase() + workoutName.substring(1);
-        String date = getIntent().getStringExtra("date");
-        activityId = getIntent().getStringExtra("id");
 
-        String query = "SELECT Measurement FROM " + DatabaseHelper.WORKOUT_TABLE_TITLE + " WHERE Name = '" + workoutName + "'";
+        String workoutName = getIntent().getStringExtra("workoutName");
+        String date = getIntent().getStringExtra("date");
+        eventId = getIntent().getStringExtra("id");
+        Log.d(TAG, "EVENT ID IS");
+        Log.d(TAG, eventId);
+
         WorkoutData workoutData = dbHelper.getWorkoutDataByName(workoutName);
         measurement = workoutData.measurement;
 
-        TextView workoutNameDisplayRight = findViewById(R.id.workoutNameDisplayRight);
-        TextView workoutTypeDisplayRight = findViewById(R.id.workoutTypeDisplayRight);
-        workoutNameDisplayRight.setText(formattedWorkoutName);
+        EventData eventData = dbHelper.getEventDataById(eventId);
 
-        EventData eventData = dbHelper.getEventDataById(activityId);
+        TextView workoutNameDisplayRight;
+        TextView workoutTypeDisplayRight;
 
-        if (measurement == 1) {
+        if (measurement == 1) { //Reps, sets, weight
             setContentView(R.layout.activity_entry_detail_weights);
+
+            workoutTypeDisplayRight = findViewById(R.id.workoutTypeDisplayRight);
 
             String weight = eventData.weight;
             String setsReps = eventData.sets + " x " + eventData.reps;
@@ -54,8 +56,10 @@ public class EventDetailActivity extends AppCompatActivity {
             TextView repsSetsRight = findViewById(R.id.repsSetsRight);
 
             repsSetsRight.setText(setsReps);
-        } else if (measurement == 2){
+        } else if (measurement == 2){ //Reps, sets
             setContentView(R.layout.activity_entry_detail_weights_simple);
+
+            workoutTypeDisplayRight = findViewById(R.id.workoutTypeDisplayRight);
 
             String setsReps = eventData.sets + " x " + eventData.reps;
 
@@ -67,14 +71,18 @@ public class EventDetailActivity extends AppCompatActivity {
             TextView repsRight = findViewById(R.id.repsRight);
             repsRight.setText(setsReps);
         } else {
-            if (measurement == 3) {
+            if (measurement == 3) { //Time and Distance
                 setContentView(R.layout.activity_entry_detail_distance);
+                workoutTypeDisplayRight = findViewById(R.id.workoutTypeDisplayRight);
+
                 workoutTypeDisplayRight.setText("Time and Distance");
                 TextView distanceRight = findViewById(R.id.distanceRight);
                 String distance = eventData.distance;
                 distanceRight.setText(distance);
-            } else {
+            } else { //Time
                 setContentView(R.layout.activity_entry_detail_simple);
+                workoutTypeDisplayRight = findViewById(R.id.workoutTypeDisplayRight);
+
                 workoutTypeDisplayRight.setText("Time");
             }
 
@@ -87,6 +95,11 @@ public class EventDetailActivity extends AppCompatActivity {
 
             timeRight.setText(formattedTime);
         }
+
+        workoutNameDisplayRight = findViewById(R.id.workoutNameDisplayRight);
+        String formattedWorkoutName = workoutName.substring(0, 1).toUpperCase() + workoutName.substring(1);
+        workoutNameDisplayRight.setText(formattedWorkoutName);
+
         getSupportActionBar().setTitle("Workout Detail");
     }
 
@@ -111,9 +124,9 @@ public class EventDetailActivity extends AppCompatActivity {
 
     public void deleteWorkout(MenuItem item) {
         if (measurement == 1 || measurement == 2){
-            dbHelper.deleteEvent("Weight", activityId);
+            dbHelper.deleteEvent("Weight", eventId);
         } else{
-            dbHelper.deleteEvent("Time", activityId);
+            dbHelper.deleteEvent("Time", eventId);
         }
         finish();
     }
@@ -128,5 +141,8 @@ public class EventDetailActivity extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }

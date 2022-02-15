@@ -1,5 +1,6 @@
 package com.example.andrew.fitapp;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -54,10 +55,11 @@ public class CalendarFragment extends Fragment implements EventsOverviewActivity
 
         List<EventData> activityList = dbHelper.getEventDataByName(workoutName, null, "Recent");
 
-        HashMap<String,Integer> activityDateMap = new HashMap<String, Integer>();
+        HashMap<String,Integer> activityDateMap = new HashMap<>();
+        HashMap<Button,String> buttonDateMap = new HashMap<>();
 
         for (int i = 0; i < activityList.size(); i++){
-            activityDateMap.put(activityList.get(i).date, 1); //MM/dd/yyyy
+            activityDateMap.put(activityList.get(i).date, activityList.get(i).id); //MM/dd/yyyy
         }
 
         TableLayout tl = view.findViewById(R.id.table);
@@ -89,6 +91,7 @@ public class CalendarFragment extends Fragment implements EventsOverviewActivity
                     button.setLayoutParams(llp);
                     button.setBackgroundColor(Color.parseColor("#FAFAFA"));
                     tr.addView(button);
+                    buttonDateMap.put(button, dateFormat.format(c.getTime()));
                 } else if (i == 0){     //Month text
                     TextView text = new TextView(getContext());
                     text.setLayoutParams(llp);
@@ -150,7 +153,22 @@ public class CalendarFragment extends Fragment implements EventsOverviewActivity
                     button.setText(String.valueOf(c.get(Calendar.DAY_OF_MONTH)));
                     button.setTextSize(13);
                     tr.addView(button);
+                    buttonDateMap.put(button, dateFormat.format(c.getTime()));
                     Log.d(TAG, "Added button");
+
+                    button.setOnClickListener(v -> {
+                        Log.d(TAG, "clicked on button");
+                        //get date from button
+                        String buttonDate = buttonDateMap.get(button);
+                        int id = activityDateMap.get(buttonDate);
+
+                        Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
+                        intent.putExtra("workoutName", workoutName);
+                        intent.putExtra("date", buttonDate);
+                        intent.putExtra("id", String.valueOf(id));
+                        getContext().startActivity(intent);
+                    });
+
                 }
                 if (i == 7){
                     c.add(Calendar.DAY_OF_YEAR, -13);

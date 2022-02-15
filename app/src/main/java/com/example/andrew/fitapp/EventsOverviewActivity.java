@@ -93,9 +93,8 @@ public class EventsOverviewActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
-        if (created) {
+        if (!created) {
             startActivity(getIntent());
-            finish();
         }
         created = true;
     }
@@ -111,4 +110,10 @@ public class EventsOverviewActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }
+

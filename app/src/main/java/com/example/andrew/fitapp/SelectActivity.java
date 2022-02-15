@@ -33,7 +33,6 @@ public class SelectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_workouts_screen);
         workoutType = getIntent().getStringExtra("workoutType");
         initData();
-
         initRecyclerView();
     }
 
@@ -65,21 +64,24 @@ public class SelectActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
-    public void onResume(){
+    public void onResume(){ //Called upon pressing back button from activity next on stack
         super.onResume();
-        if (created) {
-            startActivity(getIntent());
-            finish();
+        if (!created) {
+            startActivity(getIntent()); //Starts own activity
         }
         created = true;
     }
 
     @Override
+    public void onBackPressed() {
+        finish();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // check that it is the SecondActivity with an OK result
+        // check that it is the SelectActivity with an OK result
         if (requestCode == 0) {
             if (resultCode == RESULT_OK) {
                 // get String data from Intent

@@ -47,7 +47,6 @@ public class ComplexAdapter extends RecyclerView.Adapter<ComplexAdapter.SecondVi
     @Override
     public void onBindViewHolder(@NonNull SecondViewHolder holder, final int position) {
         //Called every time a view is displayed
-        Log.d(TAG, "THIS WAS CALLED");
         final String number = activityList.get(position).number;
         holder.text1.setText(number);
 
@@ -58,7 +57,7 @@ public class ComplexAdapter extends RecyclerView.Adapter<ComplexAdapter.SecondVi
         holder.text3.setText(date);
 
         final String id = activityList.get(position).id;
-
+        //TODO: Prevent clicks on "No Data Available"
         holder.layout.setOnClickListener(v -> {
             Log.d(TAG, "clicked on button");
             Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
