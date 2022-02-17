@@ -71,7 +71,7 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //New spinner value has been selected - initialize data again
-                updateFragmentList(metricSpinner.getSelectedItem().toString(), orderSpinner.getSelectedItem().toString());
+                updateFragmentList();
             }
 
             @Override
@@ -86,7 +86,7 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //New spinner value has been selected - initialize data again
-                updateFragmentList(metricSpinner.getSelectedItem().toString(), orderSpinner.getSelectedItem().toString());
+                updateFragmentList();
             }
 
             @Override
@@ -111,7 +111,7 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
         }
 
         initRecyclerView();
-        ((EventsOverviewActivity) getActivity()).setFragmentListener2(this);
+        ((EventsOverviewActivity) getActivity()).setEventListFragmentListener(this);
 
         return view;
     }
@@ -157,7 +157,8 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
                     if (metric.equals("Time")){
                         value = formatSecondsIntoDate(data.get(i).time);
                     } else if (metric.equals("Distance")){
-                        value = data.get(i).distance;
+                        DecimalFormat df = new DecimalFormat("0.00");
+                        value = String.valueOf(df.format(Float.valueOf(data.get(i).distance)));
                     } else { //Pace
                         DecimalFormat df = new DecimalFormat("0.00");
                         value = String.valueOf(df.format((Float.valueOf(data.get(i).distance)/data.get(i).time) * 3600));
@@ -195,8 +196,8 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
         }
     }
 
-    public void updateFragmentList(String metric, String order){
-        initData(metric, order);
+    public void updateFragmentList(){
+        initData(metricSpinner.getSelectedItem().toString(), orderSpinner.getSelectedItem().toString());
         initRecyclerView();
     }
 

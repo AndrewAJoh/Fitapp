@@ -19,9 +19,8 @@ public class EventsOverviewActivity extends AppCompatActivity {
     DatabaseHelper dbHelper = new DatabaseHelper(this);
     private static final String TAG = "NewEntry";
     private ViewPager mViewPager;
-    private FragmentListener fragmentListener1;
-    private FragmentListener fragmentListener2;
-    private static WorkoutData workoutData;
+    private FragmentListener eventListFragmentListener;
+    private FragmentListener calendarFragmentListener;
     private boolean created = false;
 
     @Override
@@ -67,15 +66,15 @@ public class EventsOverviewActivity extends AppCompatActivity {
     }
 
     public interface FragmentListener {
-
+        void updateFragmentList();
     }
 
-    public void setFragmentListener1(FragmentListener listener){
-        this.fragmentListener1 = listener;
+    public void setEventListFragmentListener(FragmentListener listener){
+        this.eventListFragmentListener = listener;
     }
 
-    public void setFragmentListener2(FragmentListener listener){
-        this.fragmentListener2 = listener;
+    public void setCalendarFragmentListener(FragmentListener listener){
+        this.calendarFragmentListener = listener;
     }
 
     @Override
@@ -83,9 +82,8 @@ public class EventsOverviewActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0) {
             if (resultCode == Activity.RESULT_OK) {
-                // get String data from Intent
-                //String text = spinner.getSelectedItem().toString();
-                //sendDataToFragment(text);
+                this.eventListFragmentListener.updateFragmentList();
+                this.calendarFragmentListener.updateFragmentList();
             }
         }
     }

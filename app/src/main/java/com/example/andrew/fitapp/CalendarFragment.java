@@ -47,7 +47,7 @@ public class CalendarFragment extends Fragment implements EventsOverviewActivity
         initData();
 
         initRecyclerView();
-        ((EventsOverviewActivity) getActivity()).setFragmentListener1(this);
+        ((EventsOverviewActivity) getActivity()).setCalendarFragmentListener(this);
         return view;
     }
 
@@ -97,7 +97,6 @@ public class CalendarFragment extends Fragment implements EventsOverviewActivity
                     text.setLayoutParams(llp);
 
                     int newMonth = c.get(Calendar.MONTH);
-                    Log.d(TAG, String.valueOf(newMonth));
                     if (month == newMonth){
                         text.setText("");
                     } else{
@@ -132,8 +131,6 @@ public class CalendarFragment extends Fragment implements EventsOverviewActivity
                         month = newMonth;
                     }
 
-                    String debug = "Added " + text.getText();
-                    Log.d(TAG, debug);
                     tr.addView(text);
                 } else{ //Day of the week - decrement calendar by a day
                     Date date = c.getTime();
@@ -144,7 +141,6 @@ public class CalendarFragment extends Fragment implements EventsOverviewActivity
                     button.setLayoutParams(llp);
 
                     if (activityDateMap.containsKey(dateString)){
-                        Log.d(TAG, "Found activity on date");
                         button.setBackgroundColor(Color.parseColor("#FF7A05"));
                     } else{
                         button.setBackgroundColor(Color.parseColor("#BBBBBB"));
@@ -154,7 +150,6 @@ public class CalendarFragment extends Fragment implements EventsOverviewActivity
                     button.setTextSize(13);
                     tr.addView(button);
                     buttonDateMap.put(button, dateFormat.format(c.getTime()));
-                    Log.d(TAG, "Added button");
 
                     button.setOnClickListener(v -> {
                         Log.d(TAG, "clicked on button");
@@ -181,7 +176,7 @@ public class CalendarFragment extends Fragment implements EventsOverviewActivity
         }
     }
 
-    public void updateCalendar(){
+    public void updateFragmentList(){
         initData();
     }
 
