@@ -63,6 +63,7 @@ public class CalendarFragment extends Fragment implements EventsOverviewActivity
         }
 
         TableLayout tl = view.findViewById(R.id.table);
+        tl.removeAllViews();
         tl.setShrinkAllColumns(true);
         TableRow tr;
 

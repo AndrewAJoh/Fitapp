@@ -366,16 +366,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return wd;
     }
 
-    public boolean deleteEvent(String weightOrTime, String ID) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        long result = 0;
-        if (weightOrTime.equals("Weight")) {
-            result = db.delete(EVENT_TABLE_TITLE, "ID = '" + ID + "'", null);
-            Log.d(TAG, "deleteEvent: Deleting " + ID + " " + "from " + EVENT_TABLE_TITLE);
-        } else {
-            result = db.delete(EVENT_TABLE_TITLE, "ID = '" + ID + "'", null);
-            Log.d(TAG, "deleteEvent: Deleting " + ID + " " + "from " + EVENT_TABLE_TITLE);
+    public boolean deleteEvent(String ID) {
+        SQLiteDatabase db = this.getWritableDatabase(); //TODO: Move this?
+        long result = db.delete(EVENT_TABLE_TITLE, "ID = '" + ID + "'", null);
+        Log.d(TAG, "deleteEvent: Deleted ID " + ID + " " + "from " + EVENT_TABLE_TITLE);
+
+        if (result == -1) {
+            Log.d(TAG, "deleteEvent: Failure");
+            return false;
         }
+        else {
+            Log.d(TAG, "deleteEvent: Success");
+            return true;
+        }
+    }
+
+    public boolean deleteWorkout(String name) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long result = db.delete(WORKOUT_TABLE_TITLE, "Name = '" + name + "'", null);
+        Log.d(TAG, "deleteEvent: Deleting " + name + " " + "from " + WORKOUT_TABLE_TITLE);
+
         if (result == -1) {
             Log.d(TAG, "deleteEvent: Failure");
             return false;

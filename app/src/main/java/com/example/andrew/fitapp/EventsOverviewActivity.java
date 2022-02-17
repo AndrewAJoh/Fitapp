@@ -54,7 +54,7 @@ public class EventsOverviewActivity extends AppCompatActivity {
 
     public void deleteWorkout(MenuItem item) {
         String name = getIntent().getStringExtra("workoutName");
-        dbHelper.deleteEvent("Weight", name); //TODO: Fix this
+        dbHelper.deleteWorkout(name);
         finish();
     }
 
@@ -93,6 +93,9 @@ public class EventsOverviewActivity extends AppCompatActivity {
         super.onResume();
         if (!created) {
             startActivity(getIntent());
+        } else{
+            this.eventListFragmentListener.updateFragmentList();
+            this.calendarFragmentListener.updateFragmentList();
         }
         created = true;
     }

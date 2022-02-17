@@ -123,11 +123,7 @@ public class EventDetailActivity extends AppCompatActivity {
     }
 
     public void deleteWorkout(MenuItem item) {
-        if (measurement == 1 || measurement == 2){
-            dbHelper.deleteEvent("Weight", eventId);
-        } else{
-            dbHelper.deleteEvent("Time", eventId);
-        }
+        dbHelper.deleteEvent(eventId);
         finish();
     }
 
