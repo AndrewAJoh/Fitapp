@@ -16,6 +16,8 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,6 +26,7 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static boolean useUS;
     private static final String TAG = "MainActivity";
 
     @Override
@@ -31,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "OnCreate: started");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        DatabaseHelper db = new DatabaseHelper(this);
+        useUS = db.getMeasurementSettings();
     }
 
     public void onActivityClick(View view) {
@@ -39,4 +45,24 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("workoutType", idString);
         startActivity(intent);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.settings, menu);
+        return true;
+    }
+
+    //Handle menu clicks
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settingsButton:
+                Intent i = new Intent(this, SettingsActivity.class);
+                this.startActivityForResult(i, 0);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 }

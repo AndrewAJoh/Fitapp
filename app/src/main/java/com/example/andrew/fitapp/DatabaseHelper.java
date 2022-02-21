@@ -21,6 +21,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "FIT";
     public static final String WORKOUT_TABLE_TITLE = "WORKOUTS";
     public static final String EVENT_TABLE_TITLE = "EVENT";
+    public static final String SETTINGS_TABLE_TITLE = "SETTINGS";
 
     //Workout Table
     private static final String WORKOUT_TABLE_NAME = "Name";
@@ -35,6 +36,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String EVENT_TABLE_WEIGHT = "Weight";
     private static final String EVENT_TABLE_REPS = "Reps";
     private static final String EVENT_TABLE_SETS = "Sets";
+    //Settings Table
+    private static final String SETTINGS_TABLE_MEASUREMENT = "Measurement";
 
     private static final String WORKOUT_TABLE_INITIAL_ROWS =
         "('running', 'Cardio', 3), " +
@@ -62,7 +65,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         "('skull crushers', 'Triceps', 1), " +
         "('rope pull-down', 'Triceps', 1), " +
         "('tricep push-ups', 'Triceps', 2)";
-
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -97,9 +99,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             EVENT_TABLE_REPS         + " INTEGER, " +
             EVENT_TABLE_SETS         + " INTEGER)";
 
+        String createSettingsTable =
+            "CREATE TABLE IF NOT EXISTS " + SETTINGS_TABLE_TITLE + " (" +
+            SETTINGS_TABLE_MEASUREMENT + " INTEGER)";
+
+        String initializeSettingsTableData =
+            "INSERT INTO " + SETTINGS_TABLE_TITLE + " (" +
+            SETTINGS_TABLE_MEASUREMENT + ") VALUES " +
+            "(1)";
+
         db.execSQL(createWorkoutTable);
         db.execSQL(initializeWorkoutTableData);
         db.execSQL(createActivityTable);
+        db.execSQL(createSettingsTable);
+        db.execSQL(initializeSettingsTableData);
 
 
         //TODO: Debug data, remove this code after testing
@@ -364,6 +377,62 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         return wd;
+    }
+
+    public void setMeasurementSettings(boolean measurementInput){
+        //true/1 for US, false/0 for metric
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        int databaseValue;
+        if (measurementInput){
+            databaseValue = 1;
+        } else{
+            databaseValue = 0;
+        }
+
+        Log.d(TAG, "DATABASE NEW VALUE IS: " + databaseValue);
+
+        //delete old settings record (max 1)
+        db.delete(SETTINGS_TABLE_TITLE, null, null);
+
+        contentValues.put(SETTINGS_TABLE_MEASUREMENT, databaseValue);
+
+        long result = db.insert(SETTINGS_TABLE_TITLE, null, contentValues);
+
+        if (result == -1) {
+            Log.d(TAG, "setMeasurementSettings: Failure");
+        }
+        else {
+            Log.d(TAG, "setMeasurementSettings: Success");
+        }
+
+    }
+
+    public boolean getMeasurementSettings(){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String query = "SELECT Measurement FROM " + SETTINGS_TABLE_TITLE;
+        Log.d(TAG, query);
+
+        Cursor cur = db.rawQuery(query, null);
+
+        String debugString = "";
+        boolean result;
+
+        if (cur.getCount() != 0) {
+            cur.moveToFirst();
+                debugString += cur.getInt(0);
+
+                result = cur.getInt(0) == 1;
+
+            Log.d(TAG, "QUERY RETURNED: " + debugString);
+        } else{
+            result = true;
+        }
+
+        Log.d(TAG, String.valueOf(result));
+        return result;
     }
 
     public boolean deleteEvent(String ID) {

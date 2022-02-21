@@ -158,10 +158,22 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
                         value = formatSecondsIntoDate(data.get(i).time);
                     } else if (metric.equals("Distance")){
                         DecimalFormat df = new DecimalFormat("0.00");
-                        value = String.valueOf(df.format(Float.valueOf(data.get(i).distance)));
+                        String unitsString;
+                        if (MainActivity.useUS){
+                            unitsString = " mi";
+                        } else{
+                            unitsString = " km";
+                        }
+                        value = String.valueOf(df.format(Float.valueOf(data.get(i).distance))) + unitsString;
                     } else { //Pace
                         DecimalFormat df = new DecimalFormat("0.00");
-                        value = String.valueOf(df.format((Float.valueOf(data.get(i).distance)/data.get(i).time) * 3600));
+                        String unitsString;
+                        if (MainActivity.useUS){
+                            unitsString = " mi/h";
+                        } else{
+                            unitsString = " km/h";
+                        }
+                        value = String.valueOf(df.format((Float.valueOf(data.get(i).distance)/data.get(i).time) * 3600)) + unitsString;
                     }
                     EventItem dataset = new EventItem(String.valueOf(i + 1), value, date, id);
 
