@@ -225,7 +225,8 @@ public class AddEventActivity extends AppCompatActivity {
         }
 
         if (acceptable) {
-            dbHelper.addEventData(newActivity);
+            boolean addEventDataResult = dbHelper.addEventData(newActivity);
+            intent.putExtra("added", addEventDataResult);
             setResult(RESULT_OK, intent);
             finish();
         }

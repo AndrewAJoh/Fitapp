@@ -97,7 +97,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             EVENT_TABLE_DISTANCE     + " REAL, " +
             EVENT_TABLE_WEIGHT       + " TEXT, " +
             EVENT_TABLE_REPS         + " INTEGER, " +
-            EVENT_TABLE_SETS         + " INTEGER)";
+            EVENT_TABLE_SETS         + " INTEGER, " +
+            "UNIQUE(" + EVENT_TABLE_NAME + ", " + EVENT_TABLE_DATE + "))";
 
         String createSettingsTable =
             "CREATE TABLE IF NOT EXISTS " + SETTINGS_TABLE_TITLE + " (" +
@@ -269,7 +270,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String queryOrder = " ORDER BY ";
 
         if (order.equals("Recent")){
-            queryOrder += "ID";
+            queryOrder += "Date";
         } else{
             if (metric.equals("Distance")){
                 queryOrder += "Distance";

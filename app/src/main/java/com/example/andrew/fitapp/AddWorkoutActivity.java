@@ -59,7 +59,6 @@ public class AddWorkoutActivity extends AppCompatActivity {
         Intent intent = new Intent();
         intent.putExtra("addedWorkout", workoutName);
         intent.putExtra("added", addWorkoutDataResult);
-        //Duplicate values are being added to the list regardless, need to set added to false if a pair (name, type) already exists
         setResult(RESULT_OK, intent);
         finish();
     }

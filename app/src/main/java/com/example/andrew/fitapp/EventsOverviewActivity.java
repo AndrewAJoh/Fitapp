@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 /**
  * Created by Andrew on 7/19/2018.
@@ -84,6 +85,13 @@ public class EventsOverviewActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
                 this.eventListFragmentListener.updateFragmentList();
                 this.calendarFragmentListener.updateFragmentList();
+                boolean added = data.getBooleanExtra("added", false);
+                if (!added){
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                    "Workout already exists for the current day",
+                        Toast.LENGTH_SHORT);
+                    toast.show();
+                }
             }
         }
     }
