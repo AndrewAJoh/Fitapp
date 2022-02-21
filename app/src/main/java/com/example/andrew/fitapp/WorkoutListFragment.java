@@ -24,8 +24,6 @@ import java.util.List;
 public class WorkoutListFragment extends Fragment implements EventsOverviewActivity.FragmentListener{
     private static final String TAG = "WorkoutList";
     private List<EventItem> activityList;
-    private ArrayAdapter<CharSequence> arrayAdapter;
-    private ArrayAdapter<CharSequence> orderAdapter;
     private ComplexAdapter adapter;
     private static int workoutMeasurement;
     private String workoutName;
@@ -40,10 +38,13 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         Log.d(TAG, "OnCreateView: Started");
         view = inflater.inflate(R.layout.list_tab, container, false);
+
         dbHelper = new DatabaseHelper(getContext());
         metricSpinner = view.findViewById(R.id.metricSpinner);
         orderSpinner = view.findViewById(R.id.orderSpinner);
         workoutName = getActivity().getIntent().getStringExtra("workoutName").toLowerCase();
+
+        ArrayAdapter<CharSequence> arrayAdapter;
 
         //Determine what kind of spinner is needed based on the measurement type
 
@@ -51,19 +52,20 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
         int measurement = workoutData.measurement;
 
         if (measurement == 1) {
-            arrayAdapter = ArrayAdapter.createFromResource(getContext(), R.array.WeightedMeasurements, android.R.layout.simple_spinner_item);
+            arrayAdapter = ArrayAdapter.createFromResource(getContext(), R.array.WeightedMeasurements, android.R.layout.simple_spinner_dropdown_item);
         } else if (measurement == 2){
-            arrayAdapter = ArrayAdapter.createFromResource(getContext(), R.array.SimpleWeightedMeasurements, android.R.layout.simple_spinner_item);
+            arrayAdapter = ArrayAdapter.createFromResource(getContext(), R.array.SimpleWeightedMeasurements, android.R.layout.simple_spinner_dropdown_item);
         } else if (measurement == 3) {
-            arrayAdapter = ArrayAdapter.createFromResource(getContext(), R.array.TimeMeasurements, android.R.layout.simple_spinner_item);
+            arrayAdapter = ArrayAdapter.createFromResource(getContext(), R.array.TimeMeasurements, android.R.layout.simple_spinner_dropdown_item);
         } else {
-            arrayAdapter = ArrayAdapter.createFromResource(getContext(), R.array.SimpleTimeMeasurements, android.R.layout.simple_spinner_item);
+            arrayAdapter = ArrayAdapter.createFromResource(getContext(), R.array.SimpleTimeMeasurements, android.R.layout.simple_spinner_dropdown_item);
         }
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         metricSpinner.setAdapter(arrayAdapter);
 
-        orderAdapter = ArrayAdapter.createFromResource(getContext(), R.array.ActivityOrder, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> orderAdapter;
+
+        orderAdapter = ArrayAdapter.createFromResource(getContext(), R.array.ActivityOrder, android.R.layout.simple_spinner_dropdown_item);
         orderSpinner.setAdapter(orderAdapter);
 
         metricSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

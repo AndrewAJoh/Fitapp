@@ -403,11 +403,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (result == -1) {
             Log.d(TAG, "setMeasurementSettings: Failure");
+            return;
         }
         else {
             Log.d(TAG, "setMeasurementSettings: Success");
         }
 
+        //Convert existing event data into the right units of measurement
+
+        String distanceQuery;
+        String weightQuery;
+
+        if (measurementInput) { //Converting to US
+
+            distanceQuery = "UPDATE " + EVENT_TABLE_TITLE + " SET " + EVENT_TABLE_DISTANCE +
+                    " = 0.621 * " + EVENT_TABLE_DISTANCE + " WHERE " + EVENT_TABLE_DISTANCE + " IS NOT NULL";
+
+            weightQuery = "UPDATE " + EVENT_TABLE_TITLE + " SET " + EVENT_TABLE_WEIGHT +
+                    " = 2.205 * " + EVENT_TABLE_WEIGHT + " WHERE " + EVENT_TABLE_WEIGHT + " IS NOT NULL";
+        } else{ //Converting to metric
+            distanceQuery = "UPDATE " + EVENT_TABLE_TITLE + " SET " + EVENT_TABLE_DISTANCE +
+                    " = 1.609 * " + EVENT_TABLE_DISTANCE + " WHERE " + EVENT_TABLE_DISTANCE + " IS NOT NULL";
+
+            weightQuery = "UPDATE " + EVENT_TABLE_TITLE + " SET " + EVENT_TABLE_WEIGHT +
+                    " = 0.454 * " + EVENT_TABLE_WEIGHT + " WHERE " + EVENT_TABLE_WEIGHT + " IS NOT NULL";
+        }
+        Log.d(TAG, distanceQuery + "\n" + weightQuery);
+        db.execSQL(distanceQuery);
+        db.execSQL(weightQuery);
     }
 
     public boolean getMeasurementSettings(){

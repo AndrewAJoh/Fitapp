@@ -23,7 +23,7 @@ public class SettingsActivity extends AppCompatActivity {
         metric = findViewById(R.id.metricButton);
         us = findViewById(R.id.usButton);
 
-        if (db.getMeasurementSettings()){
+        if (MainActivity.useUS){
             us.setChecked(true);
         } else{
             metric.setChecked(true);
@@ -31,14 +31,18 @@ public class SettingsActivity extends AppCompatActivity {
 
         metric.setOnClickListener(v -> {
             Log.d(TAG, "clicked on metric radio button");
-            MainActivity.useUS = false;
-            db.setMeasurementSettings(false);
+            if (MainActivity.useUS){    //Only change units if not already selected
+                MainActivity.useUS = false;
+                db.setMeasurementSettings(false);
+            }
         });
 
         us.setOnClickListener(v -> {
             Log.d(TAG, "clicked on us radio button");
-            MainActivity.useUS = true;
-            db.setMeasurementSettings(true);
+            if (!MainActivity.useUS){   //Only change units if not already selected
+                MainActivity.useUS = true;
+                db.setMeasurementSettings(true);
+            }
         });
 
     }
