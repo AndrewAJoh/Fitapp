@@ -8,6 +8,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -30,11 +31,20 @@ public class AddEventActivity extends AppCompatActivity {
         workoutName = getIntent().getStringExtra("workoutName");
         WorkoutData workoutData = dbHelper.getWorkoutDataByName(workoutName);
         workoutMeasurement = workoutData.measurement;
-        getSupportActionBar().setTitle(workoutName);
+        String formattedWorkoutNameoutput = workoutName.substring(0, 1).toUpperCase() + workoutName.substring(1);
+        getSupportActionBar().setTitle(formattedWorkoutNameoutput);
         if (workoutMeasurement == 1) { //Reps and Weight
-            setContentView(R.layout.activity_add_event_weighted);
+            setContentView(R.layout.activity_add_event_type1);
             final EditText sets = findViewById(R.id.setsText);
             final EditText reps = findViewById(R.id.repsText);
+
+            TextView unitsText = findViewById(R.id.unitsTextView);
+            if (MainActivity.useUS){
+                unitsText.setText("lbs");
+            } else{
+                unitsText.setText("kg");
+            }
+
             sets.addTextChangedListener(new TextWatcher() { //TODO: Re-evaluate this
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     if (sets.getText().toString().trim().length() == 2) {
@@ -50,20 +60,25 @@ public class AddEventActivity extends AppCompatActivity {
                 }
             });
         } else if (workoutMeasurement == 2){
-                setContentView(R.layout.activity_add_event_reps);
+                setContentView(R.layout.activity_add_event_type2);
         } else{
             //Timed activity
             if (workoutMeasurement == 3){ //Time and Distance
-                setContentView(R.layout.activity_add_event);
-
+                setContentView(R.layout.activity_add_event_type3);
+                TextView unitsText = findViewById(R.id.unitsTextView);
+                if (MainActivity.useUS){
+                    unitsText.setText("mi");
+                } else{
+                    unitsText.setText("km");
+                }
             } else if (workoutMeasurement == 4){ //Time
-                setContentView(R.layout.activity_add_event_timed_simple);
+                setContentView(R.layout.activity_add_event_type4);
             }
 
             //Automatically move from minutes to seconds
-            final EditText hours = findViewById(R.id.hhText);
-            final EditText minutes = findViewById(R.id.mmText);
-            final EditText seconds = findViewById(R.id.ssText);
+            final EditText hours = findViewById(R.id.hoursText);
+            final EditText minutes = findViewById(R.id.minutesText);
+            final EditText seconds = findViewById(R.id.secondsText);
 
             hours.addTextChangedListener(new TextWatcher() { //TODO: Re-evaluate this
                 public void onTextChanged (CharSequence s, int start, int before, int count){
@@ -117,7 +132,6 @@ public class AddEventActivity extends AppCompatActivity {
             String repsString = repsText.getText().toString();
             String weightString = weightText.getText().toString();
 
-
             Date currentDate = new Date();
             String formattedDate = new SimpleDateFormat("MM/dd/yyyy").format(currentDate);
 
@@ -139,13 +153,13 @@ public class AddEventActivity extends AppCompatActivity {
 
         } else if (workoutMeasurement == 3){
             //Time and Distance Activity
-            EditText hoursText = findViewById(R.id.hhText);
+            EditText hoursText = findViewById(R.id.hoursText);
             String hoursString = hoursText.getText().toString();
 
-            EditText minutesText = findViewById(R.id.mmText);
+            EditText minutesText = findViewById(R.id.minutesText);
             String minutesString = minutesText.getText().toString();
 
-            EditText secondsText = findViewById(R.id.ssText);
+            EditText secondsText = findViewById(R.id.secondsText);
             String secondsString = secondsText.getText().toString();
 
             EditText distanceText = findViewById(R.id.distanceText);
@@ -185,13 +199,13 @@ public class AddEventActivity extends AppCompatActivity {
             }
         } else{
             //Time Activity
-            EditText hoursText = findViewById(R.id.hhText);
+            EditText hoursText = findViewById(R.id.hoursText);
             String hoursString = hoursText.getText().toString();
 
-            EditText minutesText = findViewById(R.id.mmText);
+            EditText minutesText = findViewById(R.id.minutesText);
             String minutesString = minutesText.getText().toString();
 
-            EditText secondsText = findViewById(R.id.ssText);
+            EditText secondsText = findViewById(R.id.secondsText);
             String secondsString = secondsText.getText().toString();
 
             if (hoursString.matches("") ||

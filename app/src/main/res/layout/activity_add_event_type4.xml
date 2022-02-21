@@ -7,11 +7,12 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/hhText"
+        android:id="@+id/hoursText"
         android:layout_width="40dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="96dp"
-        android:layout_marginTop="212dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="200dp"
         android:ems="10"
         android:hint="hh"
         android:imeOptions="actionNext"
@@ -20,53 +21,79 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/colon1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="204dp"
+        android:text=":"
+        android:textSize="24dp"
+        app:layout_constraintEnd_toStartOf="@+id/minutesText"
+        app:layout_constraintStart_toEndOf="@+id/hoursText"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <EditText
-        android:id="@+id/mmText"
+        android:id="@+id/minutesText"
         android:layout_width="40dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="212dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="200dp"
         android:ems="10"
         android:hint="mm"
         android:imeOptions="actionNext"
         android:inputType="number"
         android:maxLength="2"
-        app:layout_constraintStart_toEndOf="@+id/hhText"
+        app:layout_constraintStart_toEndOf="@+id/hoursText"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/ssText"
+        android:id="@+id/secondsText"
         android:layout_width="40dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="212dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="200dp"
         android:ems="10"
         android:hint="ss"
         android:inputType="number"
         android:maxLength="2"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/mmText"
+        app:layout_constraintStart_toEndOf="@+id/minutesText"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/colon2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="204dp"
+        android:text=":"
+        android:textSize="24dp"
+        app:layout_constraintEnd_toStartOf="@+id/secondsText"
+        app:layout_constraintStart_toEndOf="@+id/minutesText"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="88dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginLeft="48dp"
         android:layout_marginTop="40dp"
         android:onClick="onAddClick"
         android:text="Add"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mmText" />
+        app:layout_constraintStart_toEndOf="@+id/cancelButton"
+        app:layout_constraintTop_toBottomOf="@+id/hoursText" />
 
     <Button
         android:id="@+id/cancelButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="88dp"
+        android:layout_marginStart="84dp"
+        android:layout_marginLeft="84dp"
         android:layout_marginTop="40dp"
         android:onClick="onCancelClick"
         android:text="Cancel"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mmText" />
+        app:layout_constraintTop_toBottomOf="@+id/hoursText" />
 
 </android.support.constraint.ConstraintLayout>

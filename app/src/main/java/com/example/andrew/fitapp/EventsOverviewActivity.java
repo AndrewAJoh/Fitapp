@@ -30,9 +30,9 @@ public class EventsOverviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_entry);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        String name = getIntent().getStringExtra("workoutName");
-        String output = name.substring(0, 1).toUpperCase() + name.substring(1);
-        getSupportActionBar().setTitle(output);
+        String workoutName = getIntent().getStringExtra("workoutName");
+        String formattedWorkoutNameoutput = workoutName.substring(0, 1).toUpperCase() + workoutName.substring(1);
+        getSupportActionBar().setTitle(formattedWorkoutNameoutput);
 
         mViewPager = findViewById(R.id.container);
         setupViewPager(mViewPager);
@@ -99,13 +99,12 @@ public class EventsOverviewActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
-        if (!created) {
-            startActivity(getIntent());
-        } else{
+        if (this.eventListFragmentListener != null){
             this.eventListFragmentListener.updateFragmentList();
+        }
+        if (this.calendarFragmentListener != null){
             this.calendarFragmentListener.updateFragmentList();
         }
-        created = true;
     }
 
     @Override

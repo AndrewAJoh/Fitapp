@@ -57,14 +57,16 @@ public class ComplexAdapter extends RecyclerView.Adapter<ComplexAdapter.SecondVi
         holder.text3.setText(date);
 
         final String id = activityList.get(position).id;
-        //TODO: Prevent clicks on "No Data Available"
+
         holder.layout.setOnClickListener(v -> {
             Log.d(TAG, "clicked on button");
-            Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
-            intent.putExtra("workoutName", name);
-            intent.putExtra("date", date);
-            intent.putExtra("id", id);
-            (mContext).startActivity(intent);
+            if (!data.equals("No Data Available")){
+                Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
+                intent.putExtra("workoutName", name);
+                intent.putExtra("date", date);
+                intent.putExtra("id", id);
+                (mContext).startActivity(intent);
+            }
         });
     }
 

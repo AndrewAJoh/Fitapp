@@ -8,29 +8,33 @@
 
     <EditText
         android:id="@+id/weightText"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginLeft="100dp"
         android:layout_marginTop="136dp"
         android:ems="10"
         android:hint="Weight"
         android:inputType="number"
-        android:maxLength="3"
+        android:maxLength="4"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/setsText"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="96dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginLeft="100dp"
         android:layout_marginTop="20dp"
         android:ems="10"
         android:hint="Sets"
         android:imeOptions="actionNext"
         android:inputType="number"
-        android:maxLength="2"
+        android:maxLength="3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/weightText" />
 
@@ -38,25 +42,26 @@
         android:id="@+id/repsText"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginLeft="36dp"
         android:layout_marginTop="20dp"
         android:ems="10"
         android:hint="Reps"
         android:inputType="number"
-        android:maxLength="2"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        android:maxLength="3"
+        app:layout_constraintStart_toEndOf="@+id/setsText"
         app:layout_constraintTop_toBottomOf="@+id/weightText" />
 
     <Button
         android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="84dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginLeft="48dp"
         android:layout_marginTop="40dp"
         android:onClick="onAddClick"
         android:text="Add"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/cancelButton"
         app:layout_constraintTop_toBottomOf="@+id/setsText" />
 
     <Button
@@ -64,6 +69,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="84dp"
+        android:layout_marginLeft="84dp"
         android:layout_marginTop="40dp"
         android:onClick="onCancelClick"
         android:text="Cancel"
@@ -75,12 +81,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="28dp"
         android:text="x"
         android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/repsText"
         app:layout_constraintStart_toEndOf="@+id/setsText"
         app:layout_constraintTop_toBottomOf="@+id/weightText" />
+
+    <TextView
+        android:id="@+id/unitsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="148dp"
+        android:text=""
+        app:layout_constraintStart_toEndOf="@+id/weightText"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
