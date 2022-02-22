@@ -45,7 +45,7 @@ public class AddEventActivity extends AppCompatActivity {
                 unitsText.setText("kg");
             }
 
-            sets.addTextChangedListener(new TextWatcher() { //TODO: Re-evaluate this
+            sets.addTextChangedListener(new TextWatcher() {
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     if (sets.getText().toString().trim().length() == 2) {
                         reps.requestFocus();
@@ -80,7 +80,7 @@ public class AddEventActivity extends AppCompatActivity {
             final EditText minutes = findViewById(R.id.minutesText);
             final EditText seconds = findViewById(R.id.secondsText);
 
-            hours.addTextChangedListener(new TextWatcher() { //TODO: Re-evaluate this
+            hours.addTextChangedListener(new TextWatcher() {
                 public void onTextChanged (CharSequence s, int start, int before, int count){
                     if (hours.getText().toString().trim().length() == 2)
                     {

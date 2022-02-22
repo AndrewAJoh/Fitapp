@@ -24,7 +24,7 @@ public class SelectActivity extends AppCompatActivity {
     private boolean created = false;
     Adapter adapter;
 
-    private List<String> workoutTypeList = new ArrayList<String>();
+    private List<String> workoutTypeList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +58,7 @@ public class SelectActivity extends AppCompatActivity {
 
     private void initData() {
         List<WorkoutData> workoutData = dbHelper.getWorkoutsByType(workoutType);
+        workoutTypeList = new ArrayList<String>();
 
         for (int i = 0; i < workoutData.size(); i++){
             workoutTypeList.add(workoutData.get(i).name);
@@ -70,6 +71,8 @@ public class SelectActivity extends AppCompatActivity {
         if (!created) {
             startActivity(getIntent()); //Starts own activity
         }
+        initData(); //refresh data in case of deletion
+        initRecyclerView();
         created = true;
     }
 
@@ -91,7 +94,7 @@ public class SelectActivity extends AppCompatActivity {
                 if (added) {
                     workoutTypeList.add(addedWorkout);
                 } else{
-                    Toast.makeText(this, "Workout already exists", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Workout already exists, or the name is invalid", Toast.LENGTH_LONG).show();
                 }
             }
         }
@@ -99,6 +102,7 @@ public class SelectActivity extends AppCompatActivity {
 
     private void initRecyclerView(){
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.removeAllViews();
 
         String logMessage = "initRecyclerView: init " + workoutType + " recyclerView";
         Log.d(TAG, logMessage);

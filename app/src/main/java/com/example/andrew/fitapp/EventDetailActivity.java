@@ -7,6 +7,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+
 /**
  * Created by Andrew on 9/6/2018.
  */
@@ -38,11 +40,17 @@ public class EventDetailActivity extends AppCompatActivity {
         TextView workoutTypeDisplayRight;
 
         if (measurement == 1) { //Reps, sets, weight
-            setContentView(R.layout.activity_entry_detail_weights);
+            setContentView(R.layout.activity_entry_detail_type1);
 
             workoutTypeDisplayRight = findViewById(R.id.workoutTypeDisplayRight);
 
             String weight = eventData.weight;
+
+            if (MainActivity.useUS){
+                weight += " lbs";
+            } else{
+                weight += " kg";
+            }
             String setsReps = eventData.sets + " x " + eventData.reps;
 
             workoutTypeDisplayRight.setText("Weight and Reps");
@@ -57,7 +65,7 @@ public class EventDetailActivity extends AppCompatActivity {
 
             repsSetsRight.setText(setsReps);
         } else if (measurement == 2){ //Reps, sets
-            setContentView(R.layout.activity_entry_detail_weights_simple);
+            setContentView(R.layout.activity_entry_detail_type2);
 
             workoutTypeDisplayRight = findViewById(R.id.workoutTypeDisplayRight);
 
@@ -72,15 +80,22 @@ public class EventDetailActivity extends AppCompatActivity {
             repsRight.setText(setsReps);
         } else {
             if (measurement == 3) { //Time and Distance
-                setContentView(R.layout.activity_entry_detail_distance);
+                setContentView(R.layout.activity_entry_detail_type3);
                 workoutTypeDisplayRight = findViewById(R.id.workoutTypeDisplayRight);
 
                 workoutTypeDisplayRight.setText("Time and Distance");
                 TextView distanceRight = findViewById(R.id.distanceRight);
-                String distance = eventData.distance;
+                DecimalFormat df = new DecimalFormat("0.00");
+                String distance = String.valueOf(df.format(Float.valueOf(eventData.distance)));
+
+                if (MainActivity.useUS){
+                    distance += " mi";
+                } else{
+                    distance += " km";
+                }
                 distanceRight.setText(distance);
             } else { //Time
-                setContentView(R.layout.activity_entry_detail_simple);
+                setContentView(R.layout.activity_entry_detail_type4);
                 workoutTypeDisplayRight = findViewById(R.id.workoutTypeDisplayRight);
 
                 workoutTypeDisplayRight.setText("Time");

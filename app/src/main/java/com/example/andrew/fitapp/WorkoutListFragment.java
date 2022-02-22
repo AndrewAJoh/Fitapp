@@ -78,7 +78,6 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
-                // TODO Auto-generated method stub
 
             }
         });
@@ -93,7 +92,6 @@ public class WorkoutListFragment extends Fragment implements EventsOverviewActiv
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
-                // TODO Auto-generated method stub
 
             }
         });

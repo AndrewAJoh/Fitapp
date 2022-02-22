@@ -142,28 +142,28 @@ public class CalendarFragment extends Fragment implements EventsOverviewActivity
                     button.setLayoutParams(llp);
 
                     if (activityDateMap.containsKey(dateString)){
-                        button.setBackgroundColor(Color.parseColor("#FF7A05"));
+                        button.setBackgroundColor(Color.parseColor("#FF7A05")); //Orange
+
+                        button.setOnClickListener(v -> {
+                            Log.d(TAG, "clicked on button");
+                            //get date from button
+                            String buttonDate = buttonDateMap.get(button);
+                            int id = activityDateMap.get(buttonDate);
+
+                            Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
+                            intent.putExtra("workoutName", workoutName);
+                            intent.putExtra("date", buttonDate);
+                            intent.putExtra("id", String.valueOf(id));
+                            getContext().startActivity(intent);
+                        });
                     } else{
-                        button.setBackgroundColor(Color.parseColor("#BBBBBB"));
+                        button.setBackgroundColor(Color.parseColor("#BBBBBB")); //Grey
                     }
 
                     button.setText(String.valueOf(c.get(Calendar.DAY_OF_MONTH)));
                     button.setTextSize(13);
                     tr.addView(button);
                     buttonDateMap.put(button, dateFormat.format(c.getTime()));
-
-                    button.setOnClickListener(v -> {
-                        Log.d(TAG, "clicked on button");
-                        //get date from button
-                        String buttonDate = buttonDateMap.get(button);
-                        int id = activityDateMap.get(buttonDate);
-
-                        Intent intent = new Intent(v.getContext(), EventDetailActivity.class);
-                        intent.putExtra("workoutName", workoutName);
-                        intent.putExtra("date", buttonDate);
-                        intent.putExtra("id", String.valueOf(id));
-                        getContext().startActivity(intent);
-                    });
 
                 }
                 if (i == 7){

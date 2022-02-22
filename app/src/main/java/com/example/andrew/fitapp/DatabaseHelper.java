@@ -5,11 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Andrew on 7/19/2018.
@@ -114,45 +115,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(createActivityTable);
         db.execSQL(createSettingsTable);
         db.execSQL(initializeSettingsTableData);
-
-
-        //TODO: Debug data, remove this code after testing
-        String WORKOUT_TABLE_INITIAL_ROWS =
-                "('running', '02/13/2022', 1500, 4.00, null, null, null), " +
-                "('running', '02/10/2022', 1900, 3.75, null, null, null), " +
-                "('running', '02/06/2022', 1700, 3.12, null, null, null), " +
-                "('running', '01/04/2022', 1800, 4.25, null, null, null), " +
-                "('running', '02/02/2022', 1800, 4.50, null, null, null), " +
-                "('running', '01/31/2022', 1800, 2.00, null, null, null), " +
-                "('running', '01/29/2022', 1800, 3.35, null, null, null), " +
-                "('running', '01/28/2022', 1800, 4.15, null, null, null), " +
-                "('running', '01/25/2022', 1800, 1.50, null, null, null), " +
-                "('running', '01/20/2022', 1800, 1.00, null, null, null), " +
-                "('running', '01/18/2022', 1800, 3.00, null, null, null), " +
-                "('running', '01/15/2022', 1800, 2.50, null, null, null)";
-
-
-        String initializeEventTableData = "INSERT INTO " + EVENT_TABLE_TITLE + " (" +
-            EVENT_TABLE_NAME          + ", " +
-            EVENT_TABLE_DATE          + ", " +
-            EVENT_TABLE_TIME          + ", " +
-            EVENT_TABLE_DISTANCE          + ", " +
-            EVENT_TABLE_WEIGHT          + ", " +
-            EVENT_TABLE_REPS          + ", " +
-            EVENT_TABLE_SETS   + ") VALUES " +
-            WORKOUT_TABLE_INITIAL_ROWS;
-
-        db.execSQL(initializeEventTableData);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + WORKOUT_TABLE_NAME);
-        onCreate(db);
     }
 
     public boolean addWorkoutData(WorkoutData workout){
         SQLiteDatabase db = this.getWritableDatabase();
+
+        Pattern p = Pattern.compile("[^a-zA-Z -]");
+
+        Matcher m = p.matcher(workout.name);
+        if (m.find()){
+            return false;
+        }
+
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(WORKOUT_TABLE_NAME, workout.name);
@@ -179,6 +157,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public boolean addEventData(EventData activity){
         SQLiteDatabase db = this.getWritableDatabase();
+
+        Pattern p = Pattern.compile("[^a-zA-Z -]");
+
+        Matcher m = p.matcher(activity.name);
+        if (m.find()){
+            return false;
+        }
+
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(EVENT_TABLE_NAME, activity.name);
@@ -201,16 +187,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public long getChangesCount() {
-        SQLiteDatabase db = getReadableDatabase();
-        SQLiteStatement statement = db.compileStatement("SELECT changes()");
-        return statement.simpleQueryForLong();
-    }
-
     public EventData getEventDataById(String id){
         String logMessage = "getData: Getting data from " + EVENT_TABLE_TITLE;
         Log.d(TAG, logMessage);
         SQLiteDatabase db = this.getWritableDatabase();
+
+        Pattern p = Pattern.compile("[^0-9]");
+
+        Matcher m = p.matcher(id);
+        if (m.find()){
+            Log.d(TAG, "REGEX FOUND MATCH. INVALID EVENT");
+            return null;
+        }
 
         String query = "SELECT ID, Name, Date, Time, Distance, Weight, Reps, Sets FROM " +
                 DatabaseHelper.EVENT_TABLE_TITLE +
@@ -220,27 +208,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Cursor cur = db.rawQuery(query, null);
 
-        String debugString = "";
-
         EventData ad = null;
 
         if (cur.getCount() != 0) {
             cur.moveToFirst();
-            debugString += cur.getInt(0) + ", " +
-                cur.getString(1) + ", " +
-                cur.getString(2) + ", " +
-                cur.getInt(3) + ", " +
-                cur.getString(4) + ", " +
-                cur.getString(5) + ", " +
-                cur.getString(6) + ", " +
-                cur.getString(7) + "\n";
-
-            WorkoutData wd = new WorkoutData(
-                cur.getString(0),
-                cur.getString(1),
-                cur.getInt(2));
-
-            Log.d("QUERY RETURNED: ", debugString);
 
             ad = new EventData(
                 cur.getInt(0),
@@ -253,6 +224,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cur.getString(7));
         }
 
+        cur.close();
+
         return ad;
     }
 
@@ -261,7 +234,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d(TAG, logMessage);
         SQLiteDatabase db = this.getWritableDatabase();
 
-        //TODO: Parse activityName for bad characters
+        Pattern p = Pattern.compile("[^a-zA-Z -]");
+
+        Matcher m = p.matcher(activityName);
+        if (m.find()){
+            Log.d(TAG, "REGEX FOUND MATCH. INVALID ACTIVITY");
+            return null;
+        }
 
         String query = "SELECT ID, Name, Date, Time, Distance, Weight, Reps, Sets FROM " +
                         DatabaseHelper.EVENT_TABLE_TITLE +
@@ -271,17 +250,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (order.equals("Recent")){
             queryOrder += "Date";
-        } else{
-            if (metric.equals("Distance")){
-                queryOrder += "Distance";
-            } else if (metric.equals("Time")){
-                queryOrder += "Time";
-            } else if (metric.equals("Pace")) {
-                queryOrder += "(Distance/Time)";
-            } else if (metric.equals("Reps")){
-                queryOrder += "(Reps * Sets)";
-            } else if (metric.equals("Total")){
-                queryOrder += "(Weight * Reps * Sets)";
+        } else {
+            switch(metric) {
+                case "Distance":
+                    queryOrder += "Distance";
+                case "Time":
+                    queryOrder += "Time";
+                case "Pace":
+                    queryOrder += "(Distance/Time)";
+                case "Reps":
+                    queryOrder += "(Reps * Sets)";
+                case "Total":
+                    queryOrder += "(Weight * Reps * Sets)";
             }
         }
 
@@ -290,22 +270,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Log.d(TAG, query);
 
-        List<EventData> res = new ArrayList<EventData>();
+        List<EventData> res = new ArrayList<>();
         Cursor cur = db.rawQuery(query, null);
-        String debugString = "";
 
         if (cur.getCount() != 0) {
             cur.moveToFirst();
             do {
-                debugString += cur.getInt(0) + ", " +
-                    cur.getString(1) + ", " +
-                    cur.getString(2) + ", " +
-                    cur.getInt(3) + ", " +
-                    cur.getString(4) + ", " +
-                    cur.getString(5) + ", " +
-                    cur.getString(6) + ", " +
-                    cur.getString(7) + "\n";
-
                 EventData ad = new EventData(
                     cur.getInt(0),
                     cur.getString(1),
@@ -318,8 +288,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 res.add(ad);
             } while (cur.moveToNext());
-            Log.d("QUERY RETURNED: ", debugString);
         }
+
+        cur.close();
 
         return res;
     }
@@ -328,19 +299,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String logMessage = "getData: Getting data from " + WORKOUT_TABLE_TITLE;
         Log.d(TAG, logMessage);
         SQLiteDatabase db = this.getWritableDatabase();
+
+        Pattern p = Pattern.compile("[^a-zA-Z -]");
+
+        Matcher m = p.matcher(type);
+        if (m.find()){
+            Log.d(TAG, "REGEX FOUND MATCH. INVALID EVENT");
+            return null;
+        }
+
         String query = "SELECT Name, Type, Measurement FROM " + WORKOUT_TABLE_TITLE + " WHERE Type = '" + type + "'";
         Cursor cur = db.rawQuery(query, null);
 
-        List<WorkoutData> workoutList = new ArrayList<WorkoutData>();
-
-        String debugString = "";
+        List<WorkoutData> workoutList = new ArrayList<>();
 
         if (cur.getCount() != 0) {
             cur.moveToFirst();
             do {
-                debugString += cur.getString(0) + ", " +
-                        cur.getString(1) + ", " +
-                        cur.getInt(2) + "\n";
 
                 WorkoutData wd = new WorkoutData(
                         cur.getString(0),
@@ -349,8 +324,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 workoutList.add(wd);
             } while (cur.moveToNext());
-            Log.d("QUERY RETURNED: ", debugString);
         }
+
+        cur.close();
 
         return workoutList;
     }
@@ -358,24 +334,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public WorkoutData getWorkoutDataByName(String workoutName){
         String logMessage = "getData: Getting data from " + WORKOUT_TABLE_TITLE;
         Log.d(TAG, logMessage);
-        String query = "SELECT Name, Type, Measurement FROM " + WORKOUT_TABLE_TITLE + " WHERE Name = '" + workoutName + "'";
         SQLiteDatabase db = this.getWritableDatabase();
+
+        Pattern p = Pattern.compile("[^a-zA-Z -]");
+
+        Matcher m = p.matcher(workoutName);
+        if (m.find()){
+            return null;
+        }
+
+        String query = "SELECT Name, Type, Measurement FROM " + WORKOUT_TABLE_TITLE + " WHERE Name = '" + workoutName + "'";
+
         Cursor cur = db.rawQuery(query, null);
-        String debugString = "";
         WorkoutData wd = new WorkoutData();
 
         if (cur.getCount() != 0) {
             cur.moveToFirst();
-            debugString += cur.getString(0) + ", " +
-                    cur.getString(1) + ", " +
-                    cur.getInt(2) + "\n";
 
             wd.name = cur.getString(0);
             wd.type = cur.getString(1);
             wd.measurement = cur.getInt(2);
-
-            Log.d("QUERY RETURNED: ", debugString);
         }
+
+        cur.close();
 
         return wd;
     }
@@ -441,51 +422,70 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Cursor cur = db.rawQuery(query, null);
 
-        String debugString = "";
         boolean result;
 
         if (cur.getCount() != 0) {
             cur.moveToFirst();
-                debugString += cur.getInt(0);
-
-                result = cur.getInt(0) == 1;
-
-            Log.d(TAG, "QUERY RETURNED: " + debugString);
+            result = cur.getInt(0) == 1;
         } else{
             result = true;
         }
 
         Log.d(TAG, String.valueOf(result));
+
+        cur.close();
         return result;
     }
 
-    public boolean deleteEvent(String ID) {
-        SQLiteDatabase db = this.getWritableDatabase(); //TODO: Move this?
-        long result = db.delete(EVENT_TABLE_TITLE, "ID = '" + ID + "'", null);
-        Log.d(TAG, "deleteEvent: Deleted ID " + ID + " " + "from " + EVENT_TABLE_TITLE);
+    public void deleteEvent(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Pattern p = Pattern.compile("[^a-zA-Z -]");
+
+        Matcher m = p.matcher(id);
+        if (m.find()){
+            return;
+        }
+
+        long result = db.delete(EVENT_TABLE_TITLE, "ID = '" + id + "'", null);
+        Log.d(TAG, "deleteEvent: Deleted ID " + id + " " + "from " + EVENT_TABLE_TITLE);
 
         if (result == -1) {
             Log.d(TAG, "deleteEvent: Failure");
-            return false;
         }
         else {
             Log.d(TAG, "deleteEvent: Success");
-            return true;
         }
     }
 
-    public boolean deleteWorkout(String name) {
+    public void deleteWorkout(String name) {
         SQLiteDatabase db = this.getWritableDatabase();
+
+        Pattern p = Pattern.compile("[^a-zA-Z -]");
+
+        Matcher m = p.matcher(name);
+        if (m.find()){
+            return;
+        }
+
         long result = db.delete(WORKOUT_TABLE_TITLE, "Name = '" + name + "'", null);
         Log.d(TAG, "deleteEvent: Deleting " + name + " " + "from " + WORKOUT_TABLE_TITLE);
 
         if (result == -1) {
+            Log.d(TAG, "deleteWorkout: Failure");
+        }
+        else {
+            Log.d(TAG, "deleteWorkout: Success");
+        }
+
+        result = db.delete(EVENT_TABLE_TITLE, EVENT_TABLE_NAME + " = '" + name + "'", null);
+        Log.d(TAG, "deleteEvent: Deleting all" + name + " workouts from " + EVENT_TABLE_TITLE);
+
+        if (result == -1) {
             Log.d(TAG, "deleteEvent: Failure");
-            return false;
         }
         else {
             Log.d(TAG, "deleteEvent: Success");
-            return true;
         }
     }
 }
